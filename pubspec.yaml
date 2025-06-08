@@ -1,0 +1,47 @@
+name: flutter_application_2
+description: "A new Flutter project."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.3 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  shared_preferences: ^2.2.2
+  supabase_flutter: ^2.3.4
+  device_info_plus: ^9.1.2
+  timezone: ^0.9.2
+  image_picker: ^1.0.7
+  fl_chart: ^0.66.2
+  app_links: ^3.4.1
+  intl: ^0.20.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/logo.png
+    - assets/corner.png
+    - assets/icons/
+  fonts:
+    - family: Comfortaa
+      fonts:
+        - asset: assets/font/Comfortaa_Bold.ttf
+        - asset: assets/font/Comfortaa_Light.ttf
+        - asset: assets/font/Comfortaa_Medium.ttf
+        - asset: assets/font/Comfortaa_Regular.ttf
+        - asset: assets/font/Comfortaa_VariableFont_wght.ttf
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo.png"
