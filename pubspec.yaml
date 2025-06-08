@@ -42,7 +42,8 @@ flutter:
         - asset: assets/font/Comfortaa_Regular.ttf
         - asset: assets/font/Comfortaa_VariableFont_wght.ttf
 
-flutter_icons:
+flutter_launcher_icons:
   android: true
   ios: true
   image_path: "assets/logo.png"
+   remove_alpha_ios: true
