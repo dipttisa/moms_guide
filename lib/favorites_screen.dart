@@ -193,27 +193,51 @@ class _FavoritesScreenState extends State<FavoritesScreen> with AutomaticKeepAli
 
     switch (index) {
       case 0: // Home
-        Navigator.pushAndRemoveUntil(
+         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-          (route) => false,
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) => const HomeScreen(),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(
+                opacity: animation,
+                child: child,
+              );
+            },
+            transitionDuration: const Duration(milliseconds: 300),
+          ),
         );
         break;
       case 1: // Favorites
         // Already on favorites
         break;
-      case 2: // Calculator
-        Navigator.pushAndRemoveUntil(
+      case 2: // CalendarScreen
+         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const CalendarScreen()),
-          (route) => false,
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) => const CalendarScreen(),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(
+                opacity: animation,
+                child: child,
+              );
+            },
+            transitionDuration: const Duration(milliseconds: 300),
+          ),
         );
         break;
       case 3: // Profile
-        Navigator.pushAndRemoveUntil(
+        Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const ProfileScreen()),
-          (route) => false,
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) => const ProfileScreen(),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(
+                opacity: animation,
+                child: child,
+              );
+            },
+            transitionDuration: const Duration(milliseconds: 300),
+          ),
         );
         break;
     }
