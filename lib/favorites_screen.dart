@@ -29,6 +29,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> with AutomaticKeepAli
   List<String> _selectedSymptomIds = []; // Changed from List<int> to List<String>
   bool _isFiltered = false;
   final SupabaseClient supabase = Supabase.instance.client;
+  Set<String> _favoritedArticleIds = {}; 
 
   // Controllers for search (will be implemented later)
   final TextEditingController _searchController = TextEditingController();
@@ -502,26 +503,27 @@ class _FavoritesScreenState extends State<FavoritesScreen> with AutomaticKeepAli
                                final imageUrl = categoryItem != null ? categoryItem['image'] : null;
 
                                return GestureDetector(
-                                 onTap: () {
-                                   Navigator.push(
-                                     context,
-                                     MaterialPageRoute(
-                                       builder: (context) => InformationArticleDetailScreen(article: categoryItem),
-                                     ),
-                                   ).then((result) {
-                                     if (result != null && result is Map<String, dynamic>) {
-                                       final articleId = result['articleId'] as String;
-                                       final isFavorite = result['isFavorite'] as bool;
-                                       if (!isFavorite) {
-                                         // Если статья удалена из избранного, обновляем список
-                                         setState(() {
-                                           _categoryItems.removeWhere((item) => item['id'] == articleId);
-                                           _filteredItems.removeWhere((item) => item['id'] == articleId);
-                                         });
-                                       }
-                                     }
-                                   });
-                                 },
+                                 
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => InformationArticleDetailScreen(
+                                          article: categoryItem,
+                                          onFavoriteChanged: (articleId, isFavorite) {
+                                            if (!isFavorite) {
+                                              // Удаляем из избранного списка
+                                              setState(() {
+                                                _categoryItems.removeWhere((item) => item['id'] == articleId);
+                                                _filteredItems.removeWhere((item) => item['id'] == articleId);
+                                                _favoritedArticleIds.remove(articleId);
+                                              });
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    );
+                                  },
                                  child: Container(
                                    decoration: BoxDecoration(
                                      color: Colors.white, // Changed background to white

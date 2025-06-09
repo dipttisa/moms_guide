@@ -62,7 +62,8 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadUserData(); // Load user data for header
     _loadRelevantItems(); // Load data for stories
     _loadCategories(); // Load category names
-    _loadUserFavorites(); // Load user's favorited articles
+    _loadUserFavorites();
+     _loadFavoritedArticleIds(); // Load user's favorited articles
     _searchController.addListener(_performSearch); // Add listener to search controller
     _loadLastPeriodDate(); // Load last period date
     _loadTodayReminders(); // Load today's reminders
@@ -75,7 +76,21 @@ class _HomeScreenState extends State<HomeScreen> {
     _scrollController.dispose();
     super.dispose();
   }
+Future<void> _loadFavoritedArticleIds() async {
+  final user = supabase.auth.currentUser;
+  if (user == null) return;
 
+  final response = await supabase
+      .from('favourites')
+      .select('information_article_id')
+      .eq('user_id', user.id);
+
+  if (mounted) {
+    setState(() {
+      _favoritedArticleIds = response.map<String>((e) => e['information_article_id'] as String).toSet();
+    });
+  }
+}
   // --- Data Loading Methods ---
   Future<void> _loadUserData() async {
     try {
@@ -1354,28 +1369,28 @@ class _HomeScreenState extends State<HomeScreen> {
                                itemBuilder: (context, index) {
                                   final categoryItem = _filteredItems[index]; // Use item from filtered list
                                   final imageUrl = categoryItem != null ? categoryItem['image'] : null;
+                                   final isFavorited = _favoritedArticleIds.contains(categoryItem['id']);
 
-                                 return GestureDetector(
-                                   onTap: () {
-                                     Navigator.push(
-                                       context,
-                                       MaterialPageRoute(
-                                         builder: (context) => InformationArticleDetailScreen(article: categoryItem),
-                                       ),
-                                     ).then((result) {
-                                       if (result != null && result is Map<String, dynamic>) {
-                                         final articleId = result['articleId'] as String;
-                                         final isFavorite = result['isFavorite'] as bool;
-                                         setState(() {
-                                           if (isFavorite) {
-                                             _favoritedArticleIds.add(articleId);
-                                           } else {
-                                             _favoritedArticleIds.remove(articleId);
-                                           }
-                                         });
-                                       }
-                                     });
-                                   },
+                                   return GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => InformationArticleDetailScreen(
+                                            article: categoryItem,
+                                            onFavoriteChanged: (articleId, isFavorite) {
+                                              setState(() {
+                                                if (isFavorite) {
+                                                  _favoritedArticleIds.add(articleId);
+                                                } else {
+                                                  _favoritedArticleIds.remove(articleId);
+                                                }
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      );
+                                    },
                                    child: Container(
                                      decoration: BoxDecoration(
                                        color: Colors.white, // Changed background to white as in the right mockup card
