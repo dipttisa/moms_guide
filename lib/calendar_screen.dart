@@ -2112,7 +2112,7 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                           child: BackdropFilter(
                             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 15.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [

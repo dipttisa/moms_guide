@@ -676,10 +676,10 @@ class _CombinedHeaderDelegate extends SliverPersistentHeaderDelegate {
   final VoidCallback onFilterPressed;
 
   @override
-  double get minExtent => 240.0; // Approximate collapsed height (User Info + Search + Divider + Category List)
+  double get minExtent => 218.0; // Approximate collapsed height (User Info + Search + Divider + Category List)
 
   @override
-  double get maxExtent => 240.0; // Approximate expanded height (same as min for now)
+  double get maxExtent => 218.0; // Approximate expanded height (same as min for now)
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
@@ -703,7 +703,7 @@ class _CombinedHeaderDelegate extends SliverPersistentHeaderDelegate {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10), // Apply blur effect
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0), // Padding for the whole top section
+            padding: const EdgeInsets.fromLTRB(16.0, 7.0, 16.0, 16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

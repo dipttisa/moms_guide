@@ -111,7 +111,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-
+    final scaleFactor = (screenWidth / 375.0).clamp(1.0, 1.3);
     return Scaffold(
       backgroundColor: const Color(0xFFEBE6F2),
       body: Stack(
@@ -137,32 +137,38 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             child: AnimatedBuilder(
               animation: _logoAnimation,
               builder: (context, child) {
-                return Transform.translate(
-                  offset: Offset(_logoAnimation.value * screenWidth, 0),
-                  child: Hero(
-                    tag: 'logo',
-                    child: Image.asset(
-                      'assets/logo.png',
-                      width: screenWidth * 0.3,
-                      height: screenWidth * 0.3,
-                      cacheWidth: max(1, (screenWidth * 0.3).toInt()),
-                      cacheHeight: max(1, (screenWidth * 0.3).toInt()),
-                    ),
+                 return Transform(
+                 transform: Matrix4.identity()
+                  ..translate(_logoAnimation.value * screenWidth)
+                  ..scale(scaleFactor),
+                alignment: Alignment.center,
+                child: Hero(
+                  tag: 'logo',
+                  child: Image.asset(
+                    'assets/logo.png',
+                    width: screenWidth * 0.3,
+                    height: screenWidth * 0.3,
+                    cacheWidth: max(1, (screenWidth * 0.3).toInt()),
+                    cacheHeight: max(1, (screenWidth * 0.3).toInt()),
                   ),
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
+        ),
 
           // Текст "Мамин Гид"
           Positioned(
             left: screenWidth * 0.52,
-            top: screenHeight * 0.42 - 15.0,
+            top: screenHeight * 0.41,
             child: AnimatedBuilder(
               animation: _textAnimation,
               builder: (context, child) {
-                return Transform.translate(
-                  offset: Offset(_textAnimation.value * screenWidth, 0),
+                return Transform(
+                  transform: Matrix4.identity()
+                    ..translate(_textAnimation.value * screenWidth)
+                    ..scale(scaleFactor),
+                  alignment: Alignment.topLeft,
                   child: SizedBox(
                     width: screenWidth * 0.3,
                     child: Column(
@@ -176,10 +182,10 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                               Color.fromARGB(255, 190, 125, 183),
                             ],
                           ).createShader(bounds),
-                          child: const Text(
+                          child: Text(
                             'Мамин',
                             style: TextStyle(
-                              fontSize: 18,
+                               fontSize: 18 * scaleFactor,
                               height: 1,
                               fontFamily: 'Comfortaa',
                               fontWeight: FontWeight.w900,
@@ -188,10 +194,10 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                           ),
                         ),
                         const SizedBox(height: 0),
-                        const Text(
+                          Text(
                           'Гид',
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 18 * scaleFactor,
                             fontFamily: 'Comfortaa',
                             fontWeight: FontWeight.w900,
                             color: Color(0xFFBE7DBC),
