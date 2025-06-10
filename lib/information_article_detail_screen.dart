@@ -248,7 +248,7 @@ Future<void> _toggleFavorite() async {
           .from('comments')
           .delete()
           .eq('id', commentId)
-          .eq('user_id', user.id.toString()); // Преобразуем UUID в строку
+          .eq('user_id', user.id.toString()); 
 
       await _loadArticleComments();
     } catch (e) {
@@ -286,7 +286,7 @@ Future<void> _toggleFavorite() async {
         'articleId': widget.article['id'],
         'isFavorite': _isFavorite,
       });
-      return true;  // позволяем системе выполнить pop
+      return true;  
     } else {
       Navigator.pop(context);
       return true;
@@ -682,7 +682,7 @@ Future<void> _toggleFavorite() async {
                                                   final comment = _comments[index];
                                                   final userName = comment['user']['name'] ?? 'Аноним';
                                                   final commentContent = comment['comment_content'] ?? 'Нет текста';
-                                                  final isCurrentUser = comment['user_id'] == supabase.auth.currentUser?.id;
+                                                  final isCurrentUser = supabase.auth.currentUser != null && comment['user_id'] == supabase.auth.currentUser!.id;
 
                                                   return Padding(
                                                     padding: const EdgeInsets.only(bottom: 10),

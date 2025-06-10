@@ -115,7 +115,6 @@ class _FilterModalState extends State<FilterModal> {
       ),
       child: Column(
         children: [
-          // Header with drag handle
           Container(
             padding: EdgeInsets.only(top: 12, bottom: 4),
             decoration: BoxDecoration(
@@ -281,7 +280,6 @@ class _FilterModalState extends State<FilterModal> {
             ),
           ),
           
-          // Bottom buttons
           Container(
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(

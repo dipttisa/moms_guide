@@ -8,7 +8,6 @@ class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _LoginScreenState createState() => _LoginScreenState();
 }
 
@@ -19,16 +18,15 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isLoading = false;
   bool _obscurePassword = true;
 
-  double opacity = 0.0; // Начальная прозрачность
+  double opacity = 0.0; 
 
   @override
   void initState() {
     super.initState();
 
-    // Запуск анимации через 100 миллисекунд после инициализации
     Future.delayed(const Duration(milliseconds: 600), () {
       setState(() {
-        opacity = 1.0; // Конечная прозрачность
+        opacity = 1.0; 
       });
     });
   }
@@ -70,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // Функция для форматирования ошибок Supabase
   String _formatErrorMessage(dynamic error) {
-    print('Raw error: $error'); // Логируем оригинальную ошибку
+    print('Raw error: $error'); 
     
     if (error is AuthException) {
       switch (error.message) {
@@ -81,7 +79,6 @@ class _LoginScreenState extends State<LoginScreen> {
         case 'Invalid email':
           return 'Некорректный формат email';
         default:
-          // Check for network-related messages within AuthException
           if (error.message.contains('Failed host lookup') || error.message.contains('SocketException')){
              return 'Не удалось подключиться к серверу. Проверьте ваше интернет-соединение.';
           }

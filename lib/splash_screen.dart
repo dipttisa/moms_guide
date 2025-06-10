@@ -116,7 +116,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       backgroundColor: const Color(0xFFEBE6F2),
       body: Stack(
         children: [
-          // Фоновый градиент
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -130,7 +129,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             ),
           ),
           
-          // Логотип
           Positioned(
             left: screenWidth * 0.35,
             top: screenHeight * 0.41,
@@ -157,7 +155,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           ),
         ),
 
-          // Текст "Мамин Гид"
           Positioned(
             left: screenWidth * 0.52,
             top: screenHeight * 0.41,

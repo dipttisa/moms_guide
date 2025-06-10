@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 class MedicalNormModal extends StatelessWidget {
   final int trimester;
   final double? hemoglobin;
-  final double? glucoseFasting;      // Глюкоза натощак (ммоль/л)
-  final double? glucose1hAfterMeal;       // Тест толерантности к глюкозе (да/нет)
+  final double? glucoseFasting;// Глюкоза натощак (ммоль/л)
+  final double? glucose1hAfterMeal;// Тест толерантности к глюкозе (да/нет)
 
   const MedicalNormModal({
     Key? key,
@@ -21,7 +21,6 @@ class MedicalNormModal extends StatelessWidget {
     double? glucoseFasting,
     double? glucose1hAfterMeal,
   }) {
-    print('[MODAL] Открытие модального окна норм'); // отладка
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -35,9 +34,6 @@ class MedicalNormModal extends StatelessWidget {
       ),
     );
   }
-
-  // ====== Гемоглобин ======
-
   String _getHemoglobinNormText() {
     switch (trimester) {
       case 1:
@@ -68,8 +64,6 @@ class MedicalNormModal extends StatelessWidget {
     }
     return Colors.green; // в норме — зелёный
   }
-
-  // ====== Глюкоза ======
 
   // Текст нормы для глюкозы с учётом теста толерантности
   String _getGlucoseNormText() {
@@ -147,8 +141,6 @@ class MedicalNormModal extends StatelessWidget {
                   ),
 
                   const SizedBox(height: 24),
-
-                  // Блок гемоглобина
                   Row(
                     children: [
                       Icon(Icons.bloodtype_outlined, color: hemoglobinColor, size: 28),
@@ -193,10 +185,7 @@ class MedicalNormModal extends StatelessWidget {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 24),
-
-                  // Блок глюкозы
                   Row(
                     children: [
                       Icon(Icons.monitor_heart_outlined, color: glucoseColor, size: 28),
@@ -249,11 +238,7 @@ class MedicalNormModal extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                            
-
                   const SizedBox(height: 24),
-
-                  // Кнопка закрытия
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -281,7 +266,7 @@ class MedicalNormModal extends StatelessWidget {
             ),
           ],
         ),
-                ],
+      ],
     ))
   ])));
   }

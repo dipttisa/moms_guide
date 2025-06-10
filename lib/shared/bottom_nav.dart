@@ -25,7 +25,7 @@ class BottomNav extends StatelessWidget {
       items: [
         BottomNavigationBarItem(
           icon: Column(
-            mainAxisSize: MainAxisSize.min, // Use minimum space
+            mainAxisSize: MainAxisSize.min, 
             children: [
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),
@@ -48,7 +48,7 @@ class BottomNav extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           icon: Column(
-            mainAxisSize: MainAxisSize.min, // Use minimum space
+            mainAxisSize: MainAxisSize.min, 
             children: [
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),
@@ -71,7 +71,7 @@ class BottomNav extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           icon: Column(
-            mainAxisSize: MainAxisSize.min, // Use minimum space
+            mainAxisSize: MainAxisSize.min, 
             children: [
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),
@@ -94,7 +94,7 @@ class BottomNav extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           icon: Column(
-            mainAxisSize: MainAxisSize.min, // Use minimum space
+            mainAxisSize: MainAxisSize.min, 
             children: [
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),

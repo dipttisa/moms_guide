@@ -62,7 +62,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   // Функция для форматирования ошибок Supabase
   String _formatErrorMessage(dynamic error) {
-    print('Raw error: $error'); // Логируем оригинальную ошибку
+    print('Raw error: $error');
     
     if (error is AuthException) {
       switch (error.message) {
@@ -96,7 +96,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       await supabase.auth.resetPasswordForEmail(email);
       showCustomError(context, 'Ссылка для сброса отправлена на почту!');
     } catch (e) {
-      // Теперь обрабатываем только ошибки, которые могут прийти от resetPasswordForEmail
       final errorMessage = _formatErrorMessage(e);
       showCustomError(context, errorMessage);
     } finally {

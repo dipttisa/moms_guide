@@ -52,27 +52,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final SupabaseClient supabase = Supabase.instance.client;
 
-  // Controllers for search (will be implemented later)
   final TextEditingController _searchController = TextEditingController();
-  final ScrollController _scrollController = ScrollController(); // For CustomScrollView
+  final ScrollController _scrollController = ScrollController(); 
 
   @override
   void initState() {
     super.initState();
-    _loadUserData(); // Load user data for header
-    _loadRelevantItems(); // Load data for stories
-    _loadCategories(); // Load category names
+    _loadUserData(); 
+    _loadRelevantItems(); 
+    _loadCategories();
     _loadUserFavorites();
-     _loadFavoritedArticleIds(); // Load user's favorited articles
-    _searchController.addListener(_performSearch); // Add listener to search controller
-    _loadLastPeriodDate(); // Load last period date
-    _loadTodayReminders(); // Load today's reminders
+     _loadFavoritedArticleIds();
+    _searchController.addListener(_performSearch);
+    _loadLastPeriodDate();
+    _loadTodayReminders();
   }
 
   // Dispose controllers
   @override
   void dispose() {
-    _searchController.dispose(); // Dispose search controller
+    _searchController.dispose(); 
     _scrollController.dispose();
     super.dispose();
   }
@@ -91,7 +90,6 @@ Future<void> _loadFavoritedArticleIds() async {
     });
   }
 }
-  // --- Data Loading Methods ---
   Future<void> _loadUserData() async {
     try {
       final user = supabase.auth.currentUser;
@@ -116,9 +114,7 @@ Future<void> _loadFavoritedArticleIds() async {
 
   Future<void> _loadRelevantItems() async {
     try {
-      // print('Loading items. Current pregnancy week: $_pregnancyWeek'); // Debug print
       if (_pregnancyWeek > 0) {
-        // Load relevant items for the current pregnancy week
         final response = await supabase
             .from('relevant_for_the_week')
             .select('''
@@ -135,20 +131,16 @@ Future<void> _loadFavoritedArticleIds() async {
               )
             ''')
             .eq('pregnancy_week', _pregnancyWeek);
-
-        // print('Response from database: $response'); // Debug print
-
         if (mounted) {
           setState(() {
             _relevantItems = List<Map<String, dynamic>>.from(response);
-            // print('Loaded items count: ${_relevantItems.length}'); // Debug print
-            // print('Current pregnancy week: $_pregnancyWeek'); // Debug print
-            // print('Items pregnancy weeks: ${_relevantItems.map((item) => item['pregnancy_week']).toList()}'); // Debug print
+            // print('Loaded items count: ${_relevantItems.length}'); 
+            // print('Current pregnancy week: $_pregnancyWeek'); 
+            // print('Items pregnancy weeks: ${_relevantItems.map((item) => item['pregnancy_week']).toList()}'); 
           });
         }
       } else {
-        // print('No pregnancy week set, loading all items'); // Debug print
-        // If no pregnancy week set, load default relevant items
+        // print('No pregnancy week set, loading all items'); 
         final response = await supabase
             .from('relevant_for_the_week')
             .select('''
@@ -164,13 +156,9 @@ Future<void> _loadFavoritedArticleIds() async {
                 number
               )
             ''');
-
-        // print('Response from database: $response'); // Debug print
-
         if (mounted) {
           setState(() {
             _relevantItems = List<Map<String, dynamic>>.from(response);
-            // print('Loaded items count: ${_relevantItems.length}'); // Debug print
           });
         }
       }
@@ -187,12 +175,10 @@ Future<void> _loadFavoritedArticleIds() async {
 
       if (mounted) {
         setState(() {
-          // Add "Для вас" category at the beginning
           _categoryNames = [
-            {'id': 'for_you', 'name': 'Для вас'}, // Special category for personalized content
+            {'id': 'for_you', 'name': 'Для вас'}, 
             ...List<Map<String, dynamic>>.from(response)
           ];
-          // Load items for the first category after categories are loaded
           if (_categoryNames.isNotEmpty) {
              _loadCategoryItems(_categoryNames[_selectedCategoryIndex]['id']);
           }
@@ -205,10 +191,10 @@ Future<void> _loadFavoritedArticleIds() async {
 
   Future<void> _loadUserFavorites() async {
     try {
-      final user = supabase.auth.currentUser; // Get current user
+      final user = supabase.auth.currentUser; 
       if (user == null) {
         // print('User not logged in. Cannot load favorites.');
-        return; // Exit if user is not logged in
+        return; 
       }
 
       final response = await supabase
@@ -218,32 +204,28 @@ Future<void> _loadFavoritedArticleIds() async {
 
       if (mounted) {
         setState(() {
-          // Extract article IDs from the response and add to the set
           _favoritedArticleIds = Set<String>.from(
             response.map((item) => item['information_article_id'] as String?)
-                    .where((id) => id != null) // Filter out null IDs
-                    .cast<String>() // Cast to non-nullable String
-                    .toList(), // Convert to list first, then to Set
+                    .where((id) => id != null)
+                    .cast<String>() 
+                    .toList(),
           );
           // print('Loaded ${_favoritedArticleIds.length} favorited articles.');
         });
       }
     } catch (e) {
       // print('Error loading user favorites: $e');
-      // Optionally show an error message to the user
     }
   }
 
-  // Add method to calculate pregnancy week
   int _calculatePregnancyWeek(DateTime lastPeriodDate) {
     final now = DateTime.now();
     final difference = now.difference(lastPeriodDate);
     final week = (difference.inDays / 7).floor();
-    // print('Calculated pregnancy week: $week from last period date: $lastPeriodDate'); // Debug print
+    // print('Calculated pregnancy week: $week from last period date: $lastPeriodDate');
     return week;
   }
 
-  // Add method to calculate estimated delivery date
   void _calculateEstimatedDeliveryDate() {
     if (_lastPeriodDate == null) {
       setState(() {
@@ -251,14 +233,12 @@ Future<void> _loadFavoritedArticleIds() async {
       });
       return;
     }
-    // Naegele's Rule: Add 280 days (40 weeks) to the first day of the last menstrual period
     final estimatedDate = _lastPeriodDate!.add(const Duration(days: 280));
     setState(() {
       _estimatedDeliveryDate = estimatedDate;
     });
   }
 
-  // Add method to load last period date
   Future<void> _loadLastPeriodDate() async {
     try {
       final user = supabase.auth.currentUser;
@@ -273,18 +253,16 @@ Future<void> _loadFavoritedArticleIds() async {
           setState(() {
             _lastPeriodDate = DateTime.parse(response['last_period_date']);
             _pregnancyWeek = _calculatePregnancyWeek(_lastPeriodDate!);
-            // print('Updated pregnancy week to: $_pregnancyWeek'); // Debug print
+            // print('Updated pregnancy week to: $_pregnancyWeek'); 
           });
           _calculateEstimatedDeliveryDate();
-          _loadRelevantItems(); // Reload items when week changes
+          _loadRelevantItems(); 
         }
       }
     } catch (e) {
       // print('Error loading last period date: $e');
     }
   }
-
-  // Add method to set last period date
   Future<void> _setLastPeriodDate(DateTime date) async {
     try {
       await supabase
@@ -307,19 +285,19 @@ Future<void> _loadFavoritedArticleIds() async {
   void _showCustomSnackbar(String message, {bool success = true}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: Colors.transparent, // Make background transparent
-        elevation: 0, // Remove default elevation
+        backgroundColor: Colors.transparent, 
+        elevation: 0,
         behavior: SnackBarBehavior.floating,
-        content: Container( // Wrap content in a Container for custom styling
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18), // Add padding
+        content: Container( 
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18), 
           decoration: BoxDecoration(
-            color: Colors.white, // White background
-            borderRadius: BorderRadius.circular(18), // Rounded corners
+            color: Colors.white, 
+            borderRadius: BorderRadius.circular(18), 
             boxShadow: [
               BoxShadow(
-                color: Colors.black12, // Shadow color
-                blurRadius: 16, // Shadow blur
-                offset: const Offset(0, 4), // Shadow offset
+                color: Colors.black12, 
+                blurRadius: 16, 
+                offset: const Offset(0, 4), 
               ),
             ],
           ),
@@ -328,30 +306,28 @@ Future<void> _loadFavoritedArticleIds() async {
             style: const TextStyle(
               fontSize: 17, // Font size
               fontFamily: 'Comfortaa',
-              fontWeight: FontWeight.w700, // Font weight
-              color: Color(0xFF360638), // Dark purple color
+              fontWeight: FontWeight.w700, 
+              color: Color(0xFF360638), 
             ),
-            textAlign: TextAlign.center, // Center text
+            textAlign: TextAlign.center, 
           ),
         ),
-        duration: const Duration(seconds: 3), // Set duration
+        duration: const Duration(seconds: 3), 
       ),
     );
   }
 
   Future<void> _toggleFavoriteStatus(String articleId) async {
-    final user = supabase.auth.currentUser; // Get current user
+    final user = supabase.auth.currentUser; 
     if (user == null) {
       // print('User not logged in. Cannot toggle favorite.');
-      // Optionally show a message to the user
-      return; // Exit if user is not logged in
+      return; 
     }
 
     final isFavorited = _favoritedArticleIds.contains(articleId);
 
     try {
       if (isFavorited) {
-        // Remove from favorites
         await supabase
             .from('favourites')
             .delete()
@@ -360,12 +336,11 @@ Future<void> _loadFavoritedArticleIds() async {
 
         if (mounted) {
           setState(() {
-            _favoritedArticleIds.remove(articleId); // Update local state
+            _favoritedArticleIds.remove(articleId); 
           });
         }
         // print('Removed article $articleId from favorites.');
       } else {
-        // Add to favorites
         await supabase.from('favourites').insert({
           'user_id': user.id,
           'information_article_id': articleId,
@@ -373,14 +348,13 @@ Future<void> _loadFavoritedArticleIds() async {
 
         if (mounted) {
           setState(() {
-            _favoritedArticleIds.add(articleId); // Update local state
+            _favoritedArticleIds.add(articleId); 
           });
         }
         // print('Added article $articleId to favorites.');
       }
     } catch (e) {
       // print('Error toggling favorite status for article $articleId: $e');
-      // Optionally show an error message to the user
     }
   }
 
@@ -389,8 +363,8 @@ Future<void> _loadFavoritedArticleIds() async {
     if (mounted) {
       setState(() {
         _isLoadingItems = true;
-        _categoryItems = []; // Clear previous items immediately
-        _filteredItems = []; // Clear filtered items too
+        _categoryItems = []; 
+        _filteredItems = []; 
       });
     }
      try {
@@ -400,8 +374,6 @@ Future<void> _loadFavoritedArticleIds() async {
             // print('User not logged in. Cannot load personalized articles.');
             return;
           }
-
-          // First get the journal_id from calendar for today
           final today = DateTime.now().toIso8601String().split('T')[0];
           final calendarResponse = await supabase
               .from('calendar')
@@ -423,8 +395,6 @@ Future<void> _loadFavoritedArticleIds() async {
           }
 
           final journalId = calendarResponse['journal_id'] as String;
-
-          // Then get symptoms from journal_symptom using journal_id
           final symptomsResponse = await supabase
               .from('journal_symptom')
               .select('symptom_id')
@@ -443,9 +413,7 @@ Future<void> _loadFavoritedArticleIds() async {
           }
 
           final symptomIds = symptomsResponse.map((item) => item['symptom_id'] as String).toList();
-          // print('Found symptom IDs: $symptomIds'); // Commented out debug print
-
-          // Then get articles for these symptoms
+          // print('Found symptom IDs: $symptomIds'); 
           final articlesResponse = await supabase
               .from('information_article')
               .select('''
@@ -461,13 +429,11 @@ Future<void> _loadFavoritedArticleIds() async {
                 )
               ''')
               .inFilter('symptom_id', symptomIds);
-
-          // print('Articles response: $articlesResponse'); // Comment out or remove this line if unnecessary debug print
-
+          // print('Articles response: $articlesResponse'); 
           if (mounted) {
             final List<Map<String, dynamic>> articles = articlesResponse
                 .map((item) {
-                  // print('Processing article: $item'); // Comment out or remove this line if unnecessary debug print
+                  // print('Processing article: $item'); 
                   return {
                     'id': item['id'],
                     'header': item['header'],
@@ -480,7 +446,7 @@ Future<void> _loadFavoritedArticleIds() async {
                 })
                 .toList();
 
-            // print('Processed articles: $articles'); // Comment out or remove this line if unnecessary debug print
+            // print('Processed articles: $articles');
 
             setState(() {
               _categoryItems = articles;
@@ -489,7 +455,6 @@ Future<void> _loadFavoritedArticleIds() async {
             });
           }
         } else {
-          // Regular category loading
           final response = await supabase
               .from('article_category')
               .select('''
@@ -506,22 +471,20 @@ Future<void> _loadFavoritedArticleIds() async {
               ''')
               .eq('category_id', categoryId);
 
-          // print('Regular category response: $response'); // Comment out or remove this line if unnecessary debug print
+          // print('Regular category response: $response'); 
 
           if (mounted) {
             final List<Map<String, dynamic>> fetchedItems = List<Map<String, dynamic>>.from(response);
             final List<Map<String, dynamic>> articles = fetchedItems
                 .map((item) {
-                  // print('Processing regular article: $item'); // Comment out or remove this line if unnecessary debug print
+                  // print('Processing regular article: $item'); 
                   return {
                     ...?item['article_id'] as Map<String, dynamic>,
                     'category_name': item['category']['name'] as String,
                   };
                 })
                 .toList();
-
-            // print('Processed regular articles: $articles'); // Comment out or remove this line if unnecessary debug print
-
+            // print('Processed regular articles: $articles'); 
             setState(() {
               _categoryItems = articles;
               _filteredItems = articles;
@@ -541,17 +504,16 @@ Future<void> _loadFavoritedArticleIds() async {
      }
   }
 
-  // New method to perform search filtering
   void _performSearch() {
-    final query = _searchController.text.toLowerCase(); // Get search query and make it lowercase
+    final query = _searchController.text.toLowerCase();
     // print('Search query: $query');
     setState(() {
       if (query.isEmpty) {
-        _filteredItems = _categoryItems; // If search is empty, show all items
+        _filteredItems = _categoryItems; 
         // print('Filtered items (empty query): ${_filteredItems.length}');
       } else {
         _filteredItems = _categoryItems.where((item) {
-          final header = item['header']?.toLowerCase() ?? ''; // Get header and make it lowercase (handle null)
+          final header = item['header']?.toLowerCase() ?? ''; 
           // print('Checking item header: $header against query: $query');
           final containsQuery = header.contains(query);
           // print('Contains query: $containsQuery');
@@ -561,7 +523,6 @@ Future<void> _loadFavoritedArticleIds() async {
       }
     });
   }
-
   Future<void> _loadFilteredItems(List<String> symptomIds) async {
     if (symptomIds.isEmpty) {
       setState(() {
@@ -570,7 +531,6 @@ Future<void> _loadFavoritedArticleIds() async {
       });
       return;
     }
-
     try {
       final response = await supabase
           .from('information_article')
@@ -591,10 +551,9 @@ Future<void> _loadFavoritedArticleIds() async {
     if (index == _currentIndex) return;
     
     switch (index) {
-      case 0: // Home
-        // Already on home
+      case 0: 
         break;
-      case 1: // Favorites
+      case 1:
        Navigator.pushReplacement(
           context,
           PageRouteBuilder(
@@ -624,7 +583,7 @@ Future<void> _loadFavoritedArticleIds() async {
           ),
         );
         break;
-      case 3: // Profile
+      case 3: 
         Navigator.pushReplacement(
           context,
           PageRouteBuilder(
@@ -642,7 +601,6 @@ Future<void> _loadFavoritedArticleIds() async {
     }
   }
 
-  // Update the _loadTodayReminders method
   Future<void> _loadTodayReminders() async {
     if (_isLoadingReminders) return;
     
@@ -676,7 +634,7 @@ Future<void> _loadFavoritedArticleIds() async {
           .lt('reminder_date', endOfDay.toIso8601String())
           .order('reminder_date');
 
-      // print('Loaded reminders: $response'); // Debug print
+      // print('Loaded reminders: $response'); 
 
       if (mounted) {
         setState(() {
@@ -694,8 +652,6 @@ Future<void> _loadFavoritedArticleIds() async {
       }
     }
   }
-
-  // Update the _toggleReminderCompletion method
   Future<void> _toggleReminderCompletion(String reminderId, bool currentStatus) async {
     try {
       await supabase
@@ -703,7 +659,6 @@ Future<void> _loadFavoritedArticleIds() async {
           .update({'is_completed': !currentStatus})
           .eq('id', reminderId);
 
-      // Update local state
       setState(() {
         final index = _todayReminders.indexWhere((r) => r['id'] == reminderId);
         if (index != -1) {
@@ -717,7 +672,6 @@ Future<void> _loadFavoritedArticleIds() async {
     }
   }
 
-  // Update the _showAddReminderDialog method
   void _showAddReminderDialog() {
     showModalBottomSheet(
       context: context,
@@ -755,7 +709,6 @@ Future<void> _loadFavoritedArticleIds() async {
     );
   }
 
-  // Add method to delete reminder
   Future<void> _deleteReminder(String reminderId) async {
     try {
       await supabase
@@ -770,7 +723,6 @@ Future<void> _loadFavoritedArticleIds() async {
     }
   }
 
-  // Update the _formatReminderTime method
   String _formatReminderTime(DateTime dateTime) {
     if (dateTime.hour == 0 && dateTime.minute == 0) {
       return 'Весь день';
@@ -778,7 +730,6 @@ Future<void> _loadFavoritedArticleIds() async {
     return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
 
-  // Update the _getReminderIcon method
   IconData _getReminderIcon(String title) {
     final lowerTitle = title.toLowerCase();
     if (lowerTitle.contains('витамин') || lowerTitle.contains('таблет')) {
@@ -795,19 +746,17 @@ Future<void> _loadFavoritedArticleIds() async {
     return Icons.notifications;
   }
 
-  // --- UI Build Method ---
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // No AppBar in this mockup
       body: Container(
         decoration: const BoxDecoration(
            gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color.fromARGB(157, 235, 230, 242), // Lighter purple from registration
-              Color.fromARGB(255, 252, 225, 219), // Peach from registration
+              Color.fromARGB(157, 235, 230, 242), 
+              Color.fromARGB(255, 252, 225, 219), 
             ],
             stops: [0.0, 1.0],
           ),
@@ -816,7 +765,6 @@ Future<void> _loadFavoritedArticleIds() async {
           child: CustomScrollView(
             controller: _scrollController,
             slivers: [
-              // Top section: User Info, Search, Filter
               SliverPersistentHeader(
                 pinned: true,
                 delegate: _UserInfoHeaderDelegate(
@@ -832,7 +780,6 @@ Future<void> _loadFavoritedArticleIds() async {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // User Name
                               Text(
                                 _userName.isNotEmpty ? _userName : 'Загрузка...',
                                 style: const TextStyle(
@@ -844,7 +791,6 @@ Future<void> _loadFavoritedArticleIds() async {
                                 overflow: TextOverflow.ellipsis,
                               ),
                               const SizedBox(height: 4),
-                              // User Email
                               Text(
                                 _userEmail.isNotEmpty ? _userEmail : 'Загрузка...',
                                 style: const TextStyle(
@@ -856,8 +802,6 @@ Future<void> _loadFavoritedArticleIds() async {
                                 overflow: TextOverflow.ellipsis,
                               ),
                               const SizedBox(height: 16),
-
-                              // Search Bar and Filter Button
                               Row(
                                 children: [
                                   Expanded(
@@ -917,7 +861,6 @@ Future<void> _loadFavoritedArticleIds() async {
                 ),
               ),
 
-              // Divider after search
               SliverToBoxAdapter(
                 child: Divider(
                   color: Color(0xFFBE7DBC).withOpacity(0.3),
@@ -926,8 +869,6 @@ Future<void> _loadFavoritedArticleIds() async {
                   endIndent: 16,
                 ),
               ),
-
-              // Add Pregnancy Info Section
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -1102,8 +1043,6 @@ Future<void> _loadFavoritedArticleIds() async {
                   ),
                 ),
               ),
-
-              // Daily Reminder Section
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -1216,8 +1155,6 @@ Future<void> _loadFavoritedArticleIds() async {
                   ),
                 ),
               ),
-
-              // Stories Section Title
               const SliverToBoxAdapter(
                  child: Padding(
                    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
@@ -1232,8 +1169,6 @@ Future<void> _loadFavoritedArticleIds() async {
                    ),
                  ),
                ),
-
-              // Stories Horizontal List
               SliverToBoxAdapter(
                 child: SizedBox(
                   height: 160,
@@ -1256,7 +1191,7 @@ Future<void> _loadFavoritedArticleIds() async {
                           final imageUrl = relevantItem['image'] as String?;
                           final week = relevantItem['pregnancy_week'] as int?;
 
-                          print('Building item $index: Week $week, Item: $relevantItem'); // Debug print
+                          print('Building item $index: Week $week, Item: $relevantItem');
 
                           return GestureDetector(
                             onTap: () {
@@ -1314,8 +1249,6 @@ Future<void> _loadFavoritedArticleIds() async {
                       ),
                 ),
               ),
-
-              // Spacing and Divider between Stories and Categories
               SliverToBoxAdapter(
                 child: Column(
                   children: [
@@ -1330,8 +1263,6 @@ Future<void> _loadFavoritedArticleIds() async {
                   ],
                 ),
               ),
-
-              // Categories Sticky Header
               SliverPersistentHeader(
                 pinned: true,
                 delegate: _CategoryHeaderDelegate(
@@ -1345,17 +1276,13 @@ Future<void> _loadFavoritedArticleIds() async {
                   },
                 ),
               ),
-
-              // Space between Categories and Grid
               const SliverToBoxAdapter(child: SizedBox(height: 16.0)),
-
-              // Vertical Grid (Category Items)
               SliverToBoxAdapter(
                  child: Padding(
                    padding: const EdgeInsets.symmetric(horizontal: 14.0),
-                   child: _isLoadingItems // Show loading indicator if loading
-                       ? Center(child: CircularProgressIndicator()) // Simple loading indicator
-                       : _filteredItems.isNotEmpty // Use filtered items for count
+                   child: _isLoadingItems 
+                       ? Center(child: CircularProgressIndicator()) 
+                       : _filteredItems.isNotEmpty 
                            ? GridView.builder(
                                shrinkWrap: true,
                                physics: const NeverScrollableScrollPhysics(),
@@ -1365,12 +1292,11 @@ Future<void> _loadFavoritedArticleIds() async {
                                  mainAxisSpacing: 16.0,
                                  childAspectRatio: 0.7,
                                ),
-                               itemCount: _filteredItems.length, // Use filtered items for count
+                               itemCount: _filteredItems.length,
                                itemBuilder: (context, index) {
-                                  final categoryItem = _filteredItems[index]; // Use item from filtered list
+                                  final categoryItem = _filteredItems[index];
                                   final imageUrl = categoryItem != null ? categoryItem['image'] : null;
                                    final isFavorited = _favoritedArticleIds.contains(categoryItem['id']);
-
                                    return GestureDetector(
                                     onTap: () {
                                       Navigator.push(
@@ -1393,25 +1319,22 @@ Future<void> _loadFavoritedArticleIds() async {
                                     },
                                    child: Container(
                                      decoration: BoxDecoration(
-                                       color: Colors.white, // Changed background to white as in the right mockup card
+                                       color: Colors.white, 
                                        borderRadius: BorderRadius.circular(12.0),
                                      ),
-                                      child: Stack( // Use Stack for content and "Add to favorites" icon/text
+                                      child: Stack( 
                                         children: [
                                           Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
-                                                // Conditional content: Image or Header + Text
                                                 if (imageUrl != null && (imageUrl as String).isNotEmpty)
-                                                  // Content with Image (Image + Header)
-                                                  Column( // Wrap image and header in a Column
+                                                  Column( 
                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: [
-                                                      // Item Image Area
-                                                      SizedBox( // Replaced Expanded with SizedBox
-                                                        height: 150.0, // Set a fixed height for the image area (adjust as needed)
+                                                      SizedBox( 
+                                                        height: 150.0,
                                                         child: ClipRRect(
                                                           borderRadius: BorderRadius.circular(8.0),
                                                           child: Image.network(
@@ -1424,10 +1347,9 @@ Future<void> _loadFavoritedArticleIds() async {
                                                           ),
                                                         ),
                                                       ),
-                                                      const SizedBox(height: 2), // Space between image and header
-                                                      // Article Header below the image
+                                                      const SizedBox(height: 2), 
                                                       Text(
-                                                         categoryItem != null ? categoryItem['header'] ?? 'Заголовок статьи' : 'Заголовок статьи', // Use 'header' from data or placeholder
+                                                         categoryItem != null ? categoryItem['header'] ?? 'Заголовок статьи' : 'Заголовок статьи', 
                                                          style: TextStyle(
                                                            fontFamily: 'Comfortaa',
                                                            fontSize: 14,
@@ -1438,14 +1360,13 @@ Future<void> _loadFavoritedArticleIds() async {
                                                          overflow: TextOverflow.ellipsis,
                                                       ),
                                                     ],
-                                                  ) // Remove semicolon here
+                                                  ) 
                                                 else
-                                                  // Header and Text (if no image)
                                                   Column(
                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: [
                                                        Text(
-                                                          categoryItem != null ? categoryItem['header'] ?? 'Заголовок статьи' : 'Заголовок статьи', // Use 'header' from data or placeholder
+                                                          categoryItem != null ? categoryItem['header'] ?? 'Заголовок статьи' : 'Заголовок статьи',
                                                           style: TextStyle(
                                                             fontFamily: 'Comfortaa',
                                                             fontSize: 16,
@@ -1455,35 +1376,30 @@ Future<void> _loadFavoritedArticleIds() async {
                                                           maxLines: 2,
                                                           overflow: TextOverflow.ellipsis,
                                                        ),
-                                                       const SizedBox(height: 4), // Space between header and text
+                                                       const SizedBox(height: 4),
                                                        Text(
                                                           categoryItem != null ? categoryItem['text_of_article'] ?? 'Текст статьи...\nПродолжение статьи...' : 'Текст статьи...\nПродолжение статьи...', // Use 'text_of_article' or placeholder
                                                           style: TextStyle(
                                                             fontFamily: 'Comfortaa',
-                                                            fontSize: 12, // Smaller font size for body text
+                                                            fontSize: 12,
                                                             fontWeight: FontWeight.w400,
-                                                            color: Color.fromARGB(255, 54, 6, 56).withOpacity(0.8), // Slightly lighter color for body text
+                                                            color: Color.fromARGB(255, 54, 6, 56).withOpacity(0.8), 
                                                           ),
-                                                          maxLines: 4, // Allow multiple lines for text
+                                                          maxLines: 4, 
                                                           overflow: TextOverflow.ellipsis,
                                                        ),
                                                     ],
                                                   ),
 
-                                                const SizedBox(height: 8), // Space before placeholder lines/end
-                                                // Placeholder lines (show only when no image and maybe later remove entirely) - Re-evaluating this
-                                                // For now, keeping placeholder lines structure, but might need adjustment
-                                                // Container(width: double.infinity, height: 6, decoration: BoxDecoration(color: Color(0xFFBE7DBC).withOpacity(0.5), borderRadius: BorderRadius.circular(3)), margin: EdgeInsets.only(bottom: 4)),
-                                                // Container(width: 60, height: 6, decoration: BoxDecoration(color: Color(0xFFBE7DBC).withOpacity(0.3), borderRadius: BorderRadius.circular(3))),
+                                                const SizedBox(height: 8), 
                                               ],
                                             ),
                                           ),
-                                           // Heart icon in the top right corner (FILLED)
                                            Positioned(
                                               top: 8,
                                               right: 8,
                                               child: GestureDetector(
-                                                onTap: () => _toggleFavoriteStatus(categoryItem['id'] as String), // Call toggle method
+                                                onTap: () => _toggleFavoriteStatus(categoryItem['id'] as String),
                                                 child: Container(
                                                   padding: EdgeInsets.all(4),
                                                   decoration: BoxDecoration(
@@ -1491,9 +1407,9 @@ Future<void> _loadFavoritedArticleIds() async {
                                                      borderRadius: BorderRadius.circular(8),
                                                   ),
                                                    child: Icon(
-                                                      _favoritedArticleIds.contains(categoryItem['id']) ? Icons.favorite : Icons.favorite_border, // Choose icon based on favorite status
+                                                      _favoritedArticleIds.contains(categoryItem['id']) ? Icons.favorite : Icons.favorite_border, 
                                                       size: 18,
-                                                      color: _favoritedArticleIds.contains(categoryItem['id']) ? Color(0xFFBE7DBC) : Color(0xFFBE7DBC), // Red for favorited, purple for not
+                                                      color: _favoritedArticleIds.contains(categoryItem['id']) ? Color(0xFFBE7DBC) : Color(0xFFBE7DBC), 
                                                    ),
                                                 ),
                                               ),
@@ -1561,7 +1477,7 @@ Future<void> _loadFavoritedArticleIds() async {
         ),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center, // Revert to center alignment
+        crossAxisAlignment: CrossAxisAlignment.center, 
         children: [
           Container(
             width: 40,
@@ -1578,11 +1494,11 @@ Future<void> _loadFavoritedArticleIds() async {
               ),
             ),
           ),
-          const SizedBox(width: 12), // Spacing after icon
+          const SizedBox(width: 12), 
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center, // Revert to center alignment
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   title,
@@ -1619,13 +1535,13 @@ Future<void> _loadFavoritedArticleIds() async {
               ],
             ),
           ),
-          const SizedBox(width: 8), // Spacing before actions
+          const SizedBox(width: 8), 
           Row(
-            mainAxisSize: MainAxisSize.min, // Ensure the row takes minimum space
+            mainAxisSize: MainAxisSize.min, 
             children: [
               SizedBox(
-                width: 24, // Explicitly set checkbox width
-                height: 24, // Explicitly set checkbox height
+                width: 24, 
+                height: 24, 
                 child: Checkbox(
                   value: isCompleted,
                   onChanged: (_) => onToggle(),
@@ -1635,7 +1551,7 @@ Future<void> _loadFavoritedArticleIds() async {
                   ),
                 ),
               ),
-              const SizedBox(width: 4), // Spacing between checkbox and delete icon
+              const SizedBox(width: 4), 
               IconButton(
                 icon: const Icon(
                   Icons.delete_outline,
@@ -1676,9 +1592,9 @@ class _CategoryHeaderDelegate extends SliverPersistentHeaderDelegate {
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return ClipRect(
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10), // Apply blur effect
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10), 
         child: Padding(
-          padding: const EdgeInsets.only(top: 1.0), // Added top padding here
+          padding: const EdgeInsets.only(top: 1.0), 
           child: SizedBox(
             height: 40,
             child: ListView.builder(
@@ -1734,10 +1650,10 @@ class _UserInfoHeaderDelegate extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => 153.0; // Reduced from 180.0
+  double get maxExtent => 153.0; 
 
   @override
-  double get minExtent => 153.0; // Reduced from 180.0
+  double get minExtent => 153.0; 
 
   @override
   bool shouldRebuild(_UserInfoHeaderDelegate oldDelegate) {

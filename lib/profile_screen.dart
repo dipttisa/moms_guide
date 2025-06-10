@@ -77,7 +77,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     _loadData();
     _getDeviceInfo();
-    // Start timer to update pregnancy week every minute
     _updateTimer = Timer.periodic(const Duration(minutes: 1), (timer) {
       _updatePregnancyWeek();
     });
@@ -89,14 +88,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
-  // Calculate pregnancy week based on last period date
   int _calculatePregnancyWeek(DateTime lastPeriodDate) {
     final now = DateTime.now();
     final difference = now.difference(lastPeriodDate);
     return (difference.inDays / 7).floor();
   }
 
-  // Update pregnancy week and trimester
   Future<void> _updatePregnancyWeek() async {
     if (dateOfMonthlyPeriodController.text.isEmpty) return;
 
@@ -114,11 +111,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (newWeek != _pregnancyWeek) {
         setState(() {
           _pregnancyWeek = newWeek;
-          // Обновляем триместр на основе недели
           _currentTrimester = _pregnancyWeek <= 13 ? 1 : _pregnancyWeek <= 26 ? 2 : 3;
         });
 
-        // Update trimester in database
         final user = supabase.auth.currentUser;
         if (user != null) {
           await supabase
@@ -178,7 +173,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 _loadProfileImage(imagePath);
               }
               
-              // Устанавливаем триместр из базы данных
               if (response['trimestr_id'] != null) {
                 _currentTrimester = int.parse(response['trimestr_id'].toString());
               }
@@ -188,13 +182,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 try {
                   final date = DateTime.parse(dateStr);
                   dateOfMonthlyPeriodController.text = '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
-                  // Calculate initial pregnancy week
                   _pregnancyWeek = _calculatePregnancyWeek(date);
                   
-                  // Обновляем триместр на основе недели
                   _currentTrimester = _pregnancyWeek <= 13 ? 1 : _pregnancyWeek <= 26 ? 2 : 3;
                   
-                  // Update trimester in database if different
                   if (response['trimestr_id']?.toString() != _currentTrimester.toString()) {
                     supabase
                         .from('user')
@@ -528,7 +519,7 @@ void _onNavigationTap(int index) {
           ),
         );
         break;
-      case 2: // Calculator
+      case 2: 
         Navigator.pushReplacement(
           context,
           PageRouteBuilder(
@@ -543,8 +534,7 @@ void _onNavigationTap(int index) {
           ),
         );
         break;
-      case 3: // Profile
-        // Already on profile
+      case 3: 
         break;
     }
   }

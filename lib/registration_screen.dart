@@ -8,7 +8,6 @@ class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _RegistrationScreenState createState() => _RegistrationScreenState();
 }
 
@@ -21,17 +20,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   bool _obscurePassword = true;
   bool _obscureRepeatPassword = true;
 
-  double opacity = 0.0; // Начальная прозрачность
-  bool isLoading = false; // Состояние загрузки
+  double opacity = 0.0; 
+  bool isLoading = false; 
 
   @override
   void initState() {
     super.initState();
 
-    // Запуск анимации через 100 миллисекунд после инициализации
     Future.delayed(const Duration(milliseconds: 600), () {
       setState(() {
-        opacity = 1.0; // Конечная прозрачность
+        opacity = 1.0; 
       });
     });
   }
@@ -48,7 +46,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return nameRegex.hasMatch(name);
   }
 
-  // Добавляю функцию для красивого вывода ошибок
   void showCustomError(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -84,9 +81,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
-  // Функция для форматирования ошибок Supabase
   String _formatErrorMessage(dynamic error) {
-    print('Raw error: $error'); // Логируем оригинальную ошибку
+    print('Raw error: $error'); 
     
     if (error is AuthException) {
       switch (error.message) {
@@ -145,7 +141,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       return;
     }
 
-    // Валидация ФИО
+    // Валидация имени
     if (!_validateName(name)) {
       showCustomError(context, 'Имя должно быть в формате: Мария');
       setState(() {

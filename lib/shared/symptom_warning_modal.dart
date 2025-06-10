@@ -33,11 +33,11 @@ class SymptomWarningModal extends StatelessWidget {
   Color _getSeverityColor() {
     switch (severityLevel) {
       case 1:
-        return const Color(0xFFFFA726); // Orange for low severity
+        return const Color(0xFFFFA726); 
       case 2:
-        return const Color(0xFFFF7043); // Deep Orange for medium severity
+        return const Color(0xFFFF7043); 
       case 3:
-        return const Color(0xFFE53935); // Red for high severity
+        return const Color(0xFFE53935); 
       default:
         return const Color(0xFFFFA726);
     }
@@ -91,7 +91,6 @@ class SymptomWarningModal extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Handle bar
           Container(
             margin: const EdgeInsets.only(top: 12),
             width: 40,
@@ -101,14 +100,11 @@ class SymptomWarningModal extends StatelessWidget {
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          
-          // Content
           Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header with icon and severity
                 Row(
                   children: [
                     Container(
@@ -152,10 +148,7 @@ class SymptomWarningModal extends StatelessWidget {
                     ),
                   ],
                 ),
-                
                 const SizedBox(height: 24),
-                
-                // Warning message
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -176,10 +169,7 @@ class SymptomWarningModal extends StatelessWidget {
                     ),
                   ),
                 ),
-                
                 const SizedBox(height: 24),
-                
-                // Close button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(

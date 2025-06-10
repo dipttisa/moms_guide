@@ -73,10 +73,8 @@ class _MainAppState extends State<MainApp> {
 
   void _handleDeepLink(Uri uri) {
   print('Handling deep link: $uri');
-
-  // Для deep link вида myapp://reset-password?code=...
   if (uri.host == 'reset-password') {
-    final token = uri.queryParameters['code']; // или 'token', если Supabase его так передаёт
+    final token = uri.queryParameters['code']; 
     if (token != null && token.isNotEmpty) {
       print('Reset password token: $token');
       if (navigatorKey.currentState != null) {

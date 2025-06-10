@@ -6,19 +6,17 @@ import 'shared/bottom_nav.dart';
 import 'home_screen.dart';
 import 'favorites_screen.dart';
 import 'profile_screen.dart';
-import 'dart:ui'; // Add this import for ImageFilter
-import 'package:supabase_flutter/supabase_flutter.dart'; // Add Supabase import
-import 'dart:async'; // Add this import for Timer
+import 'dart:ui'; 
+import 'package:supabase_flutter/supabase_flutter.dart'; 
+import 'dart:async';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'shared/custom_snackbar.dart';
 import 'information_article_detail_screen.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/services.dart'; // Add this import
+import 'package:flutter/services.dart'; 
 import 'shared/reminder_modal.dart';
 import 'shared/symptom_warning_modal.dart';
-
-
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
 
@@ -53,7 +51,7 @@ class _CalendarScreenState extends State<CalendarScreen>  {
     _loadWeeklyMovements();
     _loadMonthlyMedicalData();
     _loadReminders();
-    _loadFetalMovements(); // Add this line
+    _loadFetalMovements(); 
   }
 
   final int _currentIndex = 2;
@@ -69,24 +67,22 @@ class _CalendarScreenState extends State<CalendarScreen>  {
   Timer? _updateTimer;
   DateTime? _estimatedDeliveryDate;
   
-  // Add controllers for daily data
   final TextEditingController _weightController = TextEditingController();
   final TextEditingController _systolicController = TextEditingController();
   final TextEditingController _diastolicController = TextEditingController();
   final TextEditingController _temperatureController = TextEditingController();
-  
-  // Add state for daily data
+
   Map<String, dynamic>? _dailyData;
   bool _isLoadingDailyData = false;
   
-  final SupabaseClient supabase = Supabase.instance.client; // Add Supabase client instance
+  final SupabaseClient supabase = Supabase.instance.client; 
 
   // Add state for information cards
   List<Map<String, dynamic>> _informationCards = [];
   bool _isLoadingInfoCards = false;
 
   // Add state for screening photos
-  final List<String> _screeningPhotos = []; // Placeholder for photo paths or URLs
+  final List<String> _screeningPhotos = []; 
 
   // Add state variables
   final TextEditingController _noteController = TextEditingController();
@@ -193,7 +189,6 @@ final trimesterSymptomNames = trimesterSymptomsResponse
     if (calendarRow != null && calendarRow['journal_id'] != null) {
       journalId = calendarRow['journal_id'];
     } else {
-      // Если записи нет, создаём новую
       final insertedJournal = await supabase
           .from('journal')
           .insert({}).select('id').single();
@@ -206,18 +201,14 @@ final trimesterSymptomNames = trimesterSymptomsResponse
       });
     }
 
-    // 2. Удалить старые симптомы
     await supabase
         .from('journal_symptom')
         .delete()
         .eq('journal_id', journalId);
 
     
-
-    // 3. Сохранить новые симптомы
     for (final symptomName in _selectedSymptoms) {
   if (!trimesterSymptomNames.contains(symptomName)) {
-    // Этот симптом не относится к текущему триместру — пропускаем
     continue;
   }
 
@@ -235,7 +226,7 @@ final trimesterSymptomNames = trimesterSymptomsResponse
         'symptom_id': symptomId,
       });
     } else {
-      print('❌ symptom_id is not a String (UUID): $symptomId');
+      print('symptom_id is not a String (UUID): $symptomId');
     }
   }
 }
@@ -258,7 +249,7 @@ final trimesterSymptomNames = trimesterSymptomsResponse
        
 
     } else {
-      print('❌ symptom_id is not a String (UUID): $warningId');
+      print('symptom_id is not a String (UUID): $warningId');
     }
   }
 }
@@ -347,7 +338,7 @@ final trimesterSymptomNames = trimesterSymptomsResponse
 void _onNavigationTap(int index) {
     if (index == _currentIndex) return;
     
-    if (!mounted) return; // Add this check
+    if (!mounted) return; 
     
     switch (index) {
       case 0: // Home
@@ -365,7 +356,6 @@ void _onNavigationTap(int index) {
           ),
         );
         break;
-        break;
       case 1: // Favorites
          Navigator.pushReplacement(
           context,
@@ -381,10 +371,9 @@ void _onNavigationTap(int index) {
           ),
         );
         break;
-      case 2: // Calendar
-        // Already on calendar
+      case 2: 
         break;
-      case 3: // Profile
+      case 3: 
         Navigator.pushReplacement(
           context,
           PageRouteBuilder(
@@ -401,7 +390,6 @@ void _onNavigationTap(int index) {
         break;
     }
   }
-  // Add user data loading method
   Future<void> _loadUserData() async {
     if (!mounted) return;
 
@@ -684,8 +672,8 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
     });
     _loadMedicalData();
     _loadMonthlyMedicalData();
-    _getMonthlyReport(); // Add this line to update the report
-    _loadFetalMovements(); // Add this line
+    _getMonthlyReport(); 
+    _loadFetalMovements(); 
   }
 
   void _onNextMonth() {
@@ -695,17 +683,17 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
     });
     _loadMedicalData();
     _loadMonthlyMedicalData();
-    _getMonthlyReport(); // Add this line to update the report
-    _loadFetalMovements(); // Add this line
+    _getMonthlyReport(); 
+    _loadFetalMovements();
   }
 
   void _showCustomCalendar() {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (BuildContext context) { // Correct builder signature for showModalBottomSheet
-        return StatefulBuilder( // Use StatefulBuilder to manage state within the modal
-          builder: (BuildContext context, StateSetter setState) { // StateSetter provides the setState for this builder
+      builder: (BuildContext context) { 
+        return StatefulBuilder( 
+          builder: (BuildContext context, StateSetter setState) { 
             return Container(
               height: MediaQuery.of(context).size.height * 0.7,
               decoration: const BoxDecoration(
@@ -733,7 +721,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                         IconButton(
                           icon: const Icon(Icons.chevron_left),
                           onPressed: () {
-                            // Use the setState from StatefulBuilder to update the modal's view
                             setState(() {
                               _selectedDate = DateTime(_selectedDate.year, _selectedDate.month - 1);
                             });
@@ -757,7 +744,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                         IconButton(
                           icon: const Icon(Icons.chevron_right),
                           onPressed: () {
-                            // Use the setState from StatefulBuilder to update the modal's view
                             setState(() {
                               _selectedDate = DateTime(_selectedDate.year, _selectedDate.month + 1);
                             });
@@ -822,9 +808,7 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
 
                         return GestureDetector(
                           onTap: () {
-                            // Update the selected date in the main state
                             _onDaySelected(date, _selectedDate);
-                            // Close the modal after selection
                             Navigator.pop(context);
                           },
                           child: Container(
@@ -863,11 +847,9 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
     );
   }
 
-  // Add method to load existing journal entry
   Future<void> _loadJournalEntry() async {
     if (!mounted) return;
 
-    // Используем compute для тяжелых операций
     await Future.microtask(() async {
       try {
         final user = supabase.auth.currentUser;
@@ -1011,7 +993,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
     });
   }
 
-  // Add method to save daily data
   Future<void> _saveDailyData() async {
     if (_isLoadingDailyData) return;
     if (!mounted) return;
@@ -1101,7 +1082,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
     });
   }
 
-  // Update clear day method to also clear daily data
   Future<void> _clearDay() async {
     if (_isLoading) return;
 
@@ -1111,14 +1091,12 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
       final user = supabase.auth.currentUser;
       if (user == null) return;
 
-      // Удаляем ежедневные данные (вес, давление, температура)
       await supabase
           .from('daily_data')
           .delete()
           .eq('user_id', user.id)
           .eq('date', _selectedDate.toIso8601String());
 
-      // Очищаем поля ежедневных данных в UI
       setState(() {
         _weightController.clear();
         _systolicController.clear();
@@ -1127,7 +1105,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
         _dailyData = null;
       });
 
-      // Проверяем наличие записи в календаре для этой даты
       final existingEntries = await supabase
           .from('calendar')
           .select('journal:journal_id(*)')
@@ -1135,18 +1112,15 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
           .eq('date', _selectedDate.toIso8601String());
 
       if (existingEntries.isNotEmpty) {
-        // Удаляем записи дневника и связанные данные для этой даты
         for (final entry in existingEntries) {
           if (entry['journal'] != null) {
             final journalId = entry['journal']['id'];
             
-            // Удаляем записи journal_symptom
             await supabase
                 .from('journal_symptom')
                 .delete()
                 .eq('journal_id', journalId);
 
-            // Удаляем запись дневника
             await supabase
                 .from('journal')
                 .delete()
@@ -1154,7 +1128,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
           }
         }
 
-        // Удаляем записи календаря для этой даты
         await supabase
             .from('calendar')
             .delete()
@@ -1162,7 +1135,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
             .eq('date', _selectedDate.toIso8601String());
 
         if (mounted) {
-          // Очищаем форму дневника в UI
           setState(() {
             _noteController.text = '';
             _ultrasoundPhotos = [];
@@ -1173,7 +1145,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
           showCustomSnackbar(context, 'День успешно очищен', success: true);
         }
       } else {
-        // Просто очищаем форму дневника, если записи не существовало
         if (mounted) {
           setState(() {
             _noteController.text = '';
@@ -1184,8 +1155,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
         }
       }
       
-      // Важно: Дата последних месячных и другая статичная информация профиля НЕ УДАЛЯЕТСЯ.
-      // Перезагружаем данные профиля, чтобы убедиться, что дата последних месячных отображается корректно.
       _loadLastPeriodDate();
 
     } catch (e) {
@@ -1198,17 +1167,14 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
     }
   }
 
-  // Update save journal entry to also save daily data
   Future<void> _saveJournalEntry() async {
     if (_isLoading) return;
 
     setState(() => _isLoading = true);
 
     try {
-      // Save daily data first
       await _saveDailyData();
 
-      // Continue with existing save journal entry logic
       if (_selectedSymptoms.isEmpty && _selectedSymptomsWarnings.isEmpty && _noteController.text.isEmpty && _ultrasoundPhotos.isEmpty) {
         showCustomSnackbar(context, 'Добавьте хотя бы одину заметку или фото', success: false);
         return;
@@ -1217,7 +1183,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
       final user = supabase.auth.currentUser;
       if (user == null) return;
 
-      // Check if entry exists for this date
       final existingEntry = await supabase
           .from('calendar')
           .select('journal:journal_id(*)')
@@ -1227,7 +1192,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
 
       String journalId;
       if (existingEntry != null && existingEntry['journal'] != null) {
-        // Update existing journal entry
         journalId = existingEntry['journal']['id'];
         await supabase
             .from('journal')
@@ -1237,13 +1201,11 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
             })
             .eq('id', journalId);
 
-        // Delete existing symptom connections
         await supabase
             .from('journal_symptom')
             .delete()
             .eq('journal_id', journalId);
       } else {
-        // Create new journal entry
         final journalResponse = await supabase
             .from('journal')
             .insert({
@@ -1255,7 +1217,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
         
         journalId = journalResponse['id'];
 
-        // Create calendar entry
         await supabase
             .from('calendar')
             .insert({
@@ -1263,12 +1224,8 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
               'date': _selectedDate.toIso8601String(),
               'journal_id': journalId,
             });
-      }
+          }
 
-      
-
-
-      // Reload the journal entry to refresh the data
       await _loadJournalEntry();
     } catch (e) {
       print('Error saving entry: $e');
@@ -1277,8 +1234,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
       setState(() => _isLoading = false);
     }
   }
-
-  // Add method to pick ultrasound photo
   Future<void> _pickUltrasoundPhoto() async {
     try {
       final picker = ImagePicker();
@@ -1297,18 +1252,15 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
           throw Exception('User not authenticated');
         }
 
-        // Create a unique file name
         final fileExt = pickedFile.path.split('.').last;
         final fileName = '${DateTime.now().millisecondsSinceEpoch}.$fileExt';
         final filePath = '${user.id}/$fileName';
 
-        // Upload file to storage
         final file = File(pickedFile.path);
         await supabase.storage
             .from('analysis')
             .upload(filePath, file);
 
-        // Get public URL
         final imageUrl = supabase.storage
             .from('analysis')
             .getPublicUrl(filePath);
@@ -1327,7 +1279,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
     }
   }
 
-  // Add method to delete ultrasound photo
   Future<void> _deleteUltrasoundPhoto(String photoUrl) async {
     try {
       setState(() => _isLoading = true);
@@ -1337,12 +1288,10 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
         throw Exception('User not authenticated');
       }
 
-      // Extract file path from URL
       final uri = Uri.parse(photoUrl);
       final pathSegments = uri.pathSegments;
       final filePath = pathSegments.sublist(pathSegments.indexOf('analysis') + 1).join('/');
 
-      // Delete file from storage
       await supabase.storage
           .from('analysis')
           .remove([filePath]);
@@ -1360,7 +1309,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
     }
   }
 
-  // Add method to start/stop movement tracking
   void _markMovement() {
     setState(() {
       _movementCount++;
@@ -1369,7 +1317,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
     _saveFetalMovements();
   }
 
-  // Add method to stop movement tracking
   Future<void> _stopMovementTracking() async {
     if (!_isTrackingMovements) return;
     await _saveFetalMovements();
@@ -1387,7 +1334,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
       Navigator.of(context).pop();
     }
   }
-   // Update the dialog actions
   void _showMovementDialog() {
     final bool isTrackingAvailable = _pregnancyWeek >= 16;
 
@@ -1411,7 +1357,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (context, setState) {
-            // Убираем локальный таймер для длительности
             final startTimeStr = _movementStartTime != null
                 ? '${_movementStartTime!.hour.toString().padLeft(2, '0')}:${_movementStartTime!.minute.toString().padLeft(2, '0')}'
                 : '--:--';
@@ -1577,7 +1522,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
     );
   }
 
-  // Метод для сохранения данных о шевелениях
   Future<void> _saveFetalMovements() async {
 
     try {
@@ -1591,8 +1535,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
       final durationMinutes = endTime != null 
           ? endTime.difference(startTime).inMinutes 
           : _trackingDuration.inMinutes;
-
-  
 
       if (_currentTrackingId != null) {
         final updateData = {
@@ -1665,7 +1607,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
     }
   }
 
-  // Метод для загрузки данных о шевелениях за выбранный день
   Future<void> _loadFetalMovements() async {
     try {
       final user = supabase.auth.currentUser;
@@ -1723,7 +1664,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
     }
   }
 
-  // Метод для запуска таймера отслеживания
   void _startMovementTimer() {
     _movementTimer?.cancel();
     _movementTimer = Timer.periodic(Duration(seconds: 1), (timer) {
@@ -1731,14 +1671,12 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
         setState(() {
           final now = DateTime.now();
           final duration = now.difference(_movementStartTime!);
-          // Ensure duration is never negative and properly formatted
           _trackingDuration = duration.isNegative ? Duration.zero : duration;
         });
       }
     });
   }
 
-  // Метод для загрузки данных за неделю
   Future<void> _loadWeeklyMovements() async {
     if (_isLoadingWeeklyData) return;
     setState(() => _isLoadingWeeklyData = true);
@@ -1747,11 +1685,9 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
       final user = supabase.auth.currentUser;
       if (user == null) return;
 
-      // Получаем дату начала недели (понедельник)
       final now = DateTime.now();
       final monday = now.subtract(Duration(days: now.weekday - 1));
       
-      // Получаем данные за неделю
       final response = await supabase
           .from('fetal_movements')
           .select('*')
@@ -1769,8 +1705,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
       setState(() => _isLoadingWeeklyData = false);
     }
   }
-
-  // Метод для построения графика
   Widget _buildMovementChart() {
     if (_isLoadingWeeklyData) {
       return Center(child: CircularProgressIndicator());
@@ -1875,9 +1809,7 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
     );
   }
 
-  // Метод для построения секции отчета
   Widget _buildMovementReport() {
-    // Проверяем, доступен ли отчет (с 16 недели)
     final bool isReportAvailable = _pregnancyWeek >= 16;
 
     if (!isReportAvailable) {
@@ -1949,7 +1881,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
               children: [
                 _buildMovementChart(),
                 const SizedBox(height: 16),
-                // Статистика
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -1971,7 +1902,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                   ],
                 ),
                 const SizedBox(height: 16),
-                // Детальная статистика по дням
                 if (_weeklyMovements.isNotEmpty) ...[
                   const Text(
                     'Детальная статистика',
@@ -2020,7 +1950,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
     );
   }
 
-  // Вспомогательный метод для построения элемента статистики
   Widget _buildStatItem(String label, String value, IconData icon) {
     return Column(
       children: [
@@ -2047,7 +1976,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
     );
   }
 
-  // Методы для расчета статистики
   int _calculateAverageMovements() {
     if (_weeklyMovements.isEmpty) return 0;
     final sum = _weeklyMovements.fold<int>(
@@ -2096,11 +2024,9 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
         ),
         child: Stack(
           children: [
-            // Main scrollable content
             SafeArea(
               child: CustomScrollView(
                 slivers: [
-                  // Sticky Header with User Info (Name and Email)
                   SliverPersistentHeader(
                     pinned: true,
                     delegate: _CalendarHeaderDelegate(
@@ -2116,7 +2042,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  // User Info
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
@@ -2142,7 +2067,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                                       
                                     ],
                                   ),
-                                  // Month and Calendar Icon
                                   GestureDetector(
                                     onTap: _showCustomCalendar,
                                     child: Row(
@@ -2184,7 +2108,7 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                   // Horizontal Days List
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 5.0), // Убрал горизонтальный отступ
+                      padding: const EdgeInsets.symmetric(horizontal: 5.0), 
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -2206,17 +2130,17 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                                   child: GestureDetector(
                                     onTap: () => _onDaySelected(date, _selectedDate),
                                     child: Container(
-                                      margin: EdgeInsets.symmetric(horizontal: 0.0), // Removed horizontal margin for maximum width
+                                      margin: EdgeInsets.symmetric(horizontal: 0.0), 
                                       decoration: BoxDecoration(
                                         color: isSelected
                                             ? const Color(0xFFFFF0F0)
                                             : isToday
                                                 ? const Color(0xFFF2E4E1)
                                                 : Colors.transparent,
-                                        borderRadius: BorderRadius.circular(16), // Apply border radius
+                                        borderRadius: BorderRadius.circular(16), 
                                       ),
                                       child: Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 8.0), // Reverted horizontal padding
+                                        padding: const EdgeInsets.symmetric(vertical: 8.0), 
                                         child: Column(
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
@@ -2232,7 +2156,7 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                                                     : const Color(0xFFBB7CB2),
                                               ),
                                             ),
-                                            const SizedBox(height: 0), // Further reduced spacing
+                                            const SizedBox(height: 0), 
                                             // Weekday Name
                                             Text(
                                               _getDayName(date.weekday),
@@ -2254,50 +2178,46 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                               }),
                             ),
                           ),
-                          const SizedBox(height: 1), // Add some space after the week list
-                          // Placeholder for the cloud image
+                          const SizedBox(height: 1), 
                           Center(
-                            child: Stack( // Use Stack to layer image and content
-                              alignment: Alignment.center, // Center the content over the image
+                            child: Stack( 
+                              alignment: Alignment.center, 
                               children: [
-                                // Cloud Image
                                 Image.asset(
-                                  'assets/corner.png', // Replace with your image path
-                                  height: 240, // Adjust height as needed
+                                  'assets/corner.png', 
+                                  height: 240, 
                                   fit: BoxFit.contain,
                                 ),
-                                // Selected Date and Button (layered over the image)
                                 Padding(
-                                  padding: const EdgeInsets.only(top: 12.0, right: 12.0), // Added top and left padding
+                                  padding: const EdgeInsets.only(top: 12.0, right: 12.0), 
                                   child: Column(
-                                    mainAxisSize: MainAxisSize.min, // Make column take minimum space
+                                    mainAxisSize: MainAxisSize.min, 
                                     children: [
-                                      // Selected Date Display
-                                      Column( // Use Column to stack day number and weekday name
-                                        mainAxisAlignment: MainAxisAlignment.center, // Center the content vertically
+                                      Column( 
+                                        mainAxisAlignment: MainAxisAlignment.center, 
                                         children: [
                                           Text(
-                                            '${_selectedDate.day}', // Display only the day number
+                                            '${_selectedDate.day}', 
                                             style: const TextStyle(
-                                              fontSize: 40, // Increased font size for day number
+                                              fontSize: 40, 
                                               fontFamily: 'Comfortaa',
                                               fontWeight: FontWeight.w700,
-                                              color: Color.fromARGB(164, 54, 6, 56), // Changed color
+                                              color: Color.fromARGB(164, 54, 6, 56), 
                                             ),
                                           ),
-                                          const SizedBox(height: 0.0), // Reduced spacing
+                                          const SizedBox(height: 0.0), 
                                           Text(
-                                            _getWeekdayName(_selectedDate.weekday), // Display only the weekday name
+                                            _getWeekdayName(_selectedDate.weekday), 
                                             style: const TextStyle(
-                                              fontSize: 14, // Font size for weekday name
+                                              fontSize: 14, 
                                               fontFamily: 'Comfortaa',
                                               fontWeight: FontWeight.w400,
-                                              color: Color.fromARGB(164, 54, 6, 56), // Changed color
+                                              color: Color.fromARGB(164, 54, 6, 56), 
                                             ),
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(height: 2), // Reduced spacing after date/weekday
+                                      const SizedBox(height: 2), 
                                       // "Clear Day" Button
                                       ElevatedButton(
                                         onPressed: _isLoading ? null : _clearDay,
@@ -2337,10 +2257,8 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                       ),
                     ),
                   ),
-
-                  // Add spacing after the date/button block
                   SliverToBoxAdapter(
-                    child: SizedBox(height: 5), // Adjust spacing as needed
+                    child: SizedBox(height: 5), 
                   ),
 
                   // Divider
@@ -2353,27 +2271,22 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                     ),
                   ),
 
-                  // Add spacing after the divider
                   SliverToBoxAdapter(
-                    child: SizedBox(height: 10), // Adjust spacing as needed
+                    child: SizedBox(height: 10), 
                   ),
 
-                  // Add spacing after the divider
                   SliverToBoxAdapter(
                     child: SizedBox(height: 10),
                   ),
 
-                  // Fetal Movement Panel
                   SliverToBoxAdapter(
                     child: _buildFetalMovementPanel(),
                   ),
 
-                  // Add spacing after the fetal movement panel
                   SliverToBoxAdapter(
-                    child: SizedBox(height: 5), // Уменьшаем расстояние перед ежедневными данными
+                    child: SizedBox(height: 5),
                   ),
 
-                  // Daily Data Section
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -2397,7 +2310,7 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                                 onPressed: () {
                                   setState(() {
                                     _isEditingDailyData = !_isEditingDailyData;
-                                    if (!_isEditingDailyData) _loadDailyData(); // сбросить изменения при отмене
+                                    if (!_isEditingDailyData) _loadDailyData(); 
                                   });
                                 },
                                 tooltip: _isEditingDailyData ? 'Отмена' : 'Изменить',
@@ -2481,7 +2394,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                                   ],
                                 ),
                                 const SizedBox(height: 16),
-                                // Blood Pressure
                                 Row(
                                   children: [
                                     Container(
@@ -2574,7 +2486,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                                   ],
                                 ),
                                 const SizedBox(height: 16),
-                                // Temperature
                                 Row(
                                   children: [
                                     Container(
@@ -2668,7 +2579,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                     ),
                   ),
 
-                  // Symptoms Section (Restored)
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -2676,7 +2586,7 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            'Симптомы за день', // Section Title
+                            'Симптомы за день', 
                             style: TextStyle(
                               fontSize: 18,
                               fontFamily: 'Comfortaa',
@@ -2684,12 +2594,11 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                               color: Color.fromARGB(255, 54, 6, 56),
                             ),
                           ),
-                          const SizedBox(height: 16), // Spacing
-                                // Available symptoms for selection
-                                if (_symptoms.isEmpty) // Show message if no symptoms loaded
+                          const SizedBox(height: 16), 
+                                if (_symptoms.isEmpty) 
                                   Center(
                                     child: Text(
-                                      _isLoading // Check loading state if needed
+                                      _isLoading 
                                           ? 'Загрузка симптомов...'
                                           : 'Симптомы для вашего триместра пока не добавлены.',
                                       textAlign: TextAlign.center,
@@ -2701,8 +2610,7 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                                     ),
                                   ) else
                                 Wrap(
-                                  spacing: 4.0, // Уменьшаем горизонтальный отступ
-                                   // Уменьшаем вертикальный отступ
+                                  spacing: 4.0, 
                                   children: _symptoms.map((symptom) {
                                     final isSelected = _selectedSymptoms.contains(symptom);
                                     final isSelectedWarning = _selectedSymptomsWarnings.contains(symptom);
@@ -2714,34 +2622,34 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                                           if (selected) {
                                             _selectedSymptoms.add(symptom);
                                             _selectedSymptomsWarnings.add(symptom);
-                                            _checkSymptomWarnings(symptom);// Check for warnings when symptom is selected
+                                            _checkSymptomWarnings(symptom);
                                            
                                           } else {
                                             _selectedSymptoms.remove(symptom);
                                             _selectedSymptomsWarnings.remove(symptom);
                                           }
-                                          _symptomChangesPending = true; // Показываем кнопку  
+                                          _symptomChangesPending = true;   
                                         });
-                                        print('Selected symptoms: $_selectedSymptoms'); // Debug print
+                                        print('Selected symptoms: $_selectedSymptoms'); 
                                       },
-                                      backgroundColor: Colors.white, // Белый фон для невыбранных
+                                      backgroundColor: Colors.white, 
                                       selectedColor:isSelectedWarning
                                       ? const Color(0xFFBE7DBC)
-                                      : const Color(0xFFBE7DBC),// Фон выбранных
+                                      : const Color(0xFFBE7DBC),
                                       labelStyle: TextStyle(
                                         fontSize: 14,
                                         fontFamily: 'Comfortaa',
-                                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w700, // Bold if selected
+                                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w700, 
                                         color: isSelected || isSelectedWarning
-                                         ? Colors.white : const Color.fromARGB(216, 54, 6, 56), // Цвет текста
+                                         ? Colors.white : const Color.fromARGB(216, 54, 6, 56), 
                                       ),
                                       elevation: 4, // Тень для эффекта парения
-                                      shadowColor: Colors.black.withOpacity(0.2), // Цвет тени
-                                      showCheckmark: false, // Убираем стандартную галочку
-                                      pressElevation: 4, // Устанавливаем ту же тень при нажатии
+                                      shadowColor: Colors.black.withOpacity(0.2),
+                                      showCheckmark: false, 
+                                      pressElevation: 4, 
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20.0), // Скругленные углы
-                                        side: BorderSide.none, // Убираем стандартную границу чипа
+                                        borderRadius: BorderRadius.circular(20.0), 
+                                        side: BorderSide.none, 
                                       ),
                                     );
                                   }).toList(),
@@ -2777,12 +2685,10 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                     ),
                   ),
 
-                  // Добавляем небольшое расстояние между секциями
                   SliverToBoxAdapter(
-                    child: SizedBox(height: 5), // Регулируем отступ между секциями
+                    child: SizedBox(height: 5), 
                   ),
 
-                  // Pregnancy Information Section (Original Position)
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -2805,70 +2711,53 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                     ),
                   ),
 
-                  // Добавляем небольшое расстояние между секциями
                   SliverToBoxAdapter(
-                    child: SizedBox(height: 16), // Регулируем отступ между секциями
+                    child: SizedBox(height: 16), 
                   ),
 
-                  // Заменяем секцию избранного на отчет о шевелениях (Original Position)
                   SliverToBoxAdapter(
                     child: _buildMovementReport(),
                   ),
 
-                   // Добавляем небольшое расстояние между секциями
                   SliverToBoxAdapter(
-                    child: SizedBox(height: 16), // Регулируем отступ между секциями
+                    child: SizedBox(height: 16), 
                   ),
 
-                  // Medical Indicators Section
                   SliverToBoxAdapter(
                     child: _buildMedicalSection(),
                   ),
 
-                  // Monthly Report Section (теперь только через проверку внутри метода)
                   SliverToBoxAdapter(
                     child: _buildMonthlyReportSection(),
                   ),
 
-                  // Add small spacing between sections
                   SliverToBoxAdapter(
                     child: SizedBox(height: 16),
                   ),
 
-                  // Notes Section (Original Position)
                   SliverToBoxAdapter(
                     child: _buildNotesSection(),
                   ),
 
-                   // Добавляем небольшое расстояние между секциями
                   SliverToBoxAdapter(
-                    child: SizedBox(height: 16), // Регулируем отступ между секциями
+                    child: SizedBox(height: 16), 
                   ),
 
-                  // Screening Photos Section (Original Position)
                   SliverToBoxAdapter(
                     child: _buildUltrasoundSection(),
                   ),
 
-                   // Добавляем небольшое расстояние между секциями
                   SliverToBoxAdapter(
-                    child: SizedBox(height: 16), // Регулируем отступ между секциями
+                    child: SizedBox(height: 16), 
                   ),
 
-                  // Добавляем секцию напоминаний перед кнопкой сохранения
                   SliverToBoxAdapter(
                     child: _buildRemindersSection(),
                   ),
 
-                  // Add reminders section before the save button
-                  
-
-                  // Save Button (Original Position)
                   SliverToBoxAdapter(
                     child: _buildSaveButton(),
                   ),
-
-
                 ],
               ),
             ),
@@ -2881,7 +2770,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
       ),
     );
   }
-  // Update the pregnancy information section in build method
   Widget _buildPregnancyInfo() {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -2928,7 +2816,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                 ),
               ),
             ),
-          // Week of Pregnancy
           Row(
             children: [
               Container(
@@ -2962,7 +2849,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
           ),
           if (_lastPeriodDate != null) ...[
             const SizedBox(height: 16),
-            // Last Period Date
             Row(
               children: [
                 Container(
@@ -3005,8 +2891,7 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                 ),
               ],
             ),
-            const SizedBox(height: 16), // Add spacing
-            // Estimated Delivery Date
+            const SizedBox(height: 16), 
             Row(
               children: [
                 Container(
@@ -3017,7 +2902,7 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(
-                    Icons.baby_changing_station, // Or another relevant icon
+                    Icons.baby_changing_station, 
                     color: Color(0xFFBE7DBC),
                     size: 24,
                   ),
@@ -3045,8 +2930,8 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                           style: const TextStyle(
                             fontSize: 14,
                             fontFamily: 'Comfortaa',
-                            fontWeight: FontWeight.w700, // Make it bold
-                            color: Color(0xFFBE7DBC), // Highlight the remaining days
+                            fontWeight: FontWeight.w700, 
+                            color: Color(0xFFBE7DBC), 
                           ),
                         ),
                       ],
@@ -3061,7 +2946,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
     );
   }
 
-  // Update the notes section in build method
   Widget _buildNotesSection() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -3090,7 +2974,7 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
             ),
             child: TextField(
               controller: _noteController,
-              maxLines: null, // Убираю ограничение по количеству строк
+              maxLines: null, 
               decoration: const InputDecoration(
                 hintText: 'Введите заметку...',
                 border: InputBorder.none,
@@ -3114,7 +2998,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
     );
   }
 
-  // Update the ultrasound photos section in build method
   Widget _buildUltrasoundSection() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -3238,7 +3121,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
     );
   }
 
-  // Update the fetal movement panel in build method
   Widget _buildFetalMovementPanel() {
     final bool isReportAvailable = _pregnancyWeek >= 16;
 
@@ -3287,7 +3169,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Иконка плюс/пауза
               Container(
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
@@ -3312,7 +3193,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                   color: const Color.fromARGB(255, 54, 6, 56),
                 ),
               ),
-              // Счетчик шевелений
               if (_isTrackingMovements) ...[
                 const SizedBox(height: 4),
                 Text(
@@ -3331,7 +3211,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
     );
   }
 
-  // Update the save button in build method
   Widget _buildSaveButton() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -3359,7 +3238,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
     );
   }
 
-  // Add method to calculate estimated delivery date
   void _calculateEstimatedDeliveryDate() {
     if (_lastPeriodDate == null) {
       setState(() {
@@ -3367,14 +3245,11 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
       });
       return;
     }
-    // Naegele's Rule: Add 280 days (40 weeks) to the first day of the last menstrual period
     final estimatedDate = _lastPeriodDate!.add(const Duration(days: 280));
     setState(() {
       _estimatedDeliveryDate = estimatedDate;
     });
   }
-
-  // Add new method for medical indicators section
   Widget _buildMedicalIndicatorsSection() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -3418,7 +3293,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
             ),
             child: Column(
             children: [
-              // Hemoglobin
               _buildMedicalIndicatorRow(
                 'Гемоглобин',
                 _hemoglobinController,
@@ -3426,7 +3300,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                 Icons.bloodtype,
               ),
               const SizedBox(height: 16),
-              // Glucose fasting
               _buildMedicalIndicatorRow(
                 'Глюкоза (до еды)',
                 _glucoseController1,
@@ -3434,15 +3307,12 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                 Icons.monitor_heart,
               ),
               const SizedBox(height: 16),
-              // Glucose 1 hour
               _buildMedicalIndicatorRow(
                 'Глюкоза (через 1 час после еды)',
                 _glucoseController2,
                 'ммоль/л',
                 Icons.monitor_heart,
               ),
-
-              
               if (_isEditingMedicalData) ...[
                 const SizedBox(height: 16),
                 Align(
@@ -3473,7 +3343,6 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
     ),
   );
 }
-
   Widget _buildMedicalIndicatorRow(
   String label,
   TextEditingController controller,
@@ -3483,7 +3352,7 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 4.0),
     child: Row(
-      crossAxisAlignment: CrossAxisAlignment.center, // Центрируем по вертикали
+      crossAxisAlignment: CrossAxisAlignment.center, 
       children: [
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 5.0),
@@ -3606,7 +3475,6 @@ Widget _buildMedicalSection() {
           ),
           child: Column(
             children: [
-              // Гемоглобин
               _buildMedicalIndicatorRow(
                 'Гемоглобин',
                 _hemoglobinController,
@@ -3614,7 +3482,6 @@ Widget _buildMedicalSection() {
                 Icons.bloodtype,
               ),
               const SizedBox(height: 12),
-              // Глюкоза (до еды)
               _buildMedicalIndicatorRow(
                 'Глюкоза (до еды)',
                 _glucoseController1,
@@ -3622,7 +3489,6 @@ Widget _buildMedicalSection() {
                 Icons.monitor_heart,
               ),
               const SizedBox(height: 12),
-              // Глюкоза (через 1 час после еды)
               _buildMedicalIndicatorRow(
                 'Глюкоза (через 1 час после еды)',
                 _glucoseController2,
@@ -3674,8 +3540,6 @@ Widget _buildMedicalSection() {
   );
 }
 
-
-  // Add method to load medical data
   Future<void> _loadMedicalData() async {
     if (_isLoadingMedicalData) return;
     if (!mounted) return;
@@ -3739,7 +3603,6 @@ Widget _buildMedicalSection() {
     });
   }
 
-  // Add method to save medical data
  Future<void> _saveMedicalData() async { 
   if (_isLoadingMedicalData) return;
   if (!mounted) return;
@@ -3759,7 +3622,6 @@ Widget _buildMedicalSection() {
         }
         return;
       }
-
       double? hemoglobin;
       double? glucose1;
       double? glucose2;
@@ -3776,9 +3638,6 @@ Widget _buildMedicalSection() {
         glucose2 = _glucoseController2.text.isNotEmpty 
             ? double.tryParse(_glucoseController2.text.replaceAll(',', '.'))
             : null;
-
-        
-
       } catch (e) {
         print('Error parsing numbers: $e');
         if (mounted) {
@@ -3838,8 +3697,6 @@ Widget _buildMedicalSection() {
   });
 }
 
-
-  // Add method to generate monthly report
   Future<void> _generateMonthlyReport() async {
     if (!mounted) return;
     if (!_isOnline) {
@@ -3851,11 +3708,9 @@ Widget _buildMedicalSection() {
       final user = supabase.auth.currentUser;
       if (user == null) return;
 
-      // Get first and last day of selected month
       final firstDay = DateTime(_selectedDate.year, _selectedDate.month, 1);
       final lastDay = DateTime(_selectedDate.year, _selectedDate.month + 1, 0);
 
-      // Get all medical data for the month
       final response = await supabase
           .from('medical_indicators')
           .select('*')
@@ -3869,13 +3724,11 @@ Widget _buildMedicalSection() {
         return;
       }
 
-      // Calculate changes and generate report
       final firstRecord = response.first;
       final lastRecord = response.last;
       
       String report = 'Отчет за ${_getMonthName(_selectedDate.month)} ${_selectedDate.year}:\n\n';
       
-      // Hemoglobin changes
       if (firstRecord['hemoglobin'] != null && lastRecord['hemoglobin'] != null) {
         final change = lastRecord['hemoglobin'] - firstRecord['hemoglobin'];
         report += 'Гемоглобин: ${change > 0 ? '+' : ''}$change г/л\n';
@@ -3884,7 +3737,6 @@ Widget _buildMedicalSection() {
         }
       }
 
-      // Glucose changes
       if (firstRecord['glucose'] != null && lastRecord['glucose'] != null) {
         final change = lastRecord['glucose'] - firstRecord['glucose'];
         report += 'Глюкоза: ${change > 0 ? '+' : ''}$change ммоль/л\n';
@@ -3893,9 +3745,6 @@ Widget _buildMedicalSection() {
         }
       }
 
-      
-
-      // Show report in dialog
       if (mounted) {
         showDialog(
           context: context,
@@ -3921,7 +3770,6 @@ Widget _buildMedicalSection() {
     }
   }
 
-  // Метод для загрузки напоминаний
   Future<void> _loadReminders() async {
     if (_isLoadingReminders) return;
     setState(() => _isLoadingReminders = true);
@@ -3929,7 +3777,6 @@ Widget _buildMedicalSection() {
       final user = supabase.auth.currentUser;
       if (user == null) return;
 
-      // Получаем начало и конец выбранного дня
       final startOfDay = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
       final endOfDay = startOfDay.add(const Duration(days: 1));
 
@@ -3956,7 +3803,6 @@ Widget _buildMedicalSection() {
     }
   }
 
-  // Метод для показа диалога добавления напоминания
   void _showAddReminderDialog() {
     showModalBottomSheet(
       context: context,
@@ -3976,7 +3822,7 @@ Widget _buildMedicalSection() {
               'is_completed': false,
             });
 
-            await _loadReminders(); // Reload reminders after adding
+            await _loadReminders(); 
           } catch (e) {
             print('Ошибка добавления напоминания: $e');
             ScaffoldMessenger.of(context).showSnackBar(
@@ -4002,7 +3848,6 @@ Widget _buildMedicalSection() {
     );
   }
 
-  // Метод для построения секции напоминаний
   Widget _buildRemindersSection() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -4155,7 +4000,6 @@ Widget _buildMedicalSection() {
       ),
     );
   }
-
   void _handleReminderSave(String title, String description, DateTime date, TimeOfDay time) async {
     try {
       final user = supabase.auth.currentUser;
@@ -4178,7 +4022,7 @@ Widget _buildMedicalSection() {
       };
 
       await supabase.from('reminders').insert(reminder);
-      await _loadReminders(); // Обновляем список напоминаний
+      await _loadReminders(); 
       showCustomSnackbar(context, 'Напоминание успешно создано', success: true);
     } catch (e) {
       print('Ошибка сохранения напоминания: $e');
@@ -4209,7 +4053,6 @@ Widget _buildMedicalSection() {
     }
   }
 
-  // Add method to build monthly report section
   Widget _buildMonthlyReportSection() {
     final lastDay = DateTime(_selectedDate.year, _selectedDate.month + 1, 0).day;
     final isLastDayOfMonth = _selectedDate.day == lastDay;
@@ -4366,7 +4209,6 @@ Widget _buildMedicalSection() {
   }
 }
   
-// Custom SliverPersistentHeaderDelegate for the header
 class _CalendarHeaderDelegate extends SliverPersistentHeaderDelegate {
   final Widget child;
 
@@ -4378,10 +4220,10 @@ class _CalendarHeaderDelegate extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => 89.0; // Reduced height for Name and Email
+  double get maxExtent => 89.0; 
 
   @override
-  double get minExtent => 89.0; // Should be same as maxExtent for fixed header
+  double get minExtent => 89.0; 
 
   @override
   bool shouldRebuild(_CalendarHeaderDelegate oldDelegate) {

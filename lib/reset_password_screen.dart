@@ -26,7 +26,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         opacity = 1.0;
       });
     });
-    // Проверяем текущего пользователя или сессию при загрузке экрана
     final currentUser = supabase.auth.currentUser;
     print('ResetPasswordScreen: Current User ID: ${currentUser?.id}');
     print('ResetPasswordScreen: Current Session: ${currentUser != null ? "Exists" : "Does not exist"}');
@@ -71,19 +70,18 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     if (error is AuthException) {
       print('ResetPasswordScreen: Handling AuthException: ${error.message}');
       switch (error.message) {
-        case 'Password should be at least 6 characters.': // Убедимся, что обрабатываем точное сообщение
+        case 'Password should be at least 6 characters.': 
           return 'Пароль должен содержать минимум 6 символов';
         case 'Invalid token':
           return 'Ссылка для сброса пароля недействительна или устарела';
         case 'Token expired':
           return 'Срок действия ссылки истек. Запросите новую ссылку';
-        // Добавим обработку для ошибки, если нет активной сессии/пользователя
-        case 'Invalid claim: expiration': // Пример ошибки, если токен истек/неправильный и нет сессии
+        case 'Invalid claim: expiration': 
         case 'JWT expired':
           return 'Срок действия ссылки истек. Запросите новую ссылку';
-        case 'Auth session not found': // Пример ошибки, если нет активной сессии
+        case 'Auth session not found': 
           return 'Сессия для сброса пароля не найдена. Попробуйте еще раз.';
-        case 'New password should be different from the old password.': // Добавляем обработку для ошибки совпадения паролей
+        case 'New password should be different from the old password.': 
           return 'Новый пароль должен отличаться от старого.';
         default:
           print('ResetPasswordScreen: Unhandled AuthException: ${error.message}');
@@ -109,22 +107,19 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     }
     setState(() { isLoading = true; });
     try {
-      // Используем Supabase updateUser для смены пароля (если пользователь уже авторизован по deep link)
       await supabase.auth.updateUser(
         UserAttributes(password: password),
       );
       showCustomError(context, 'Пароль успешно изменён!');
-      // Возможно, здесь нужно перенаправить пользователя на экран входа
-      Navigator.pushReplacementNamed(context, '/login'); // Предполагая, что у вас есть маршрут '/login'
+      Navigator.pushReplacementNamed(context, '/login'); 
     } catch (e) {
-      print('ResetPasswordScreen: Error during password reset: $e'); // Логируем ошибку при сбросе
+      print('ResetPasswordScreen: Error during password reset: $e'); 
       final errorMessage = _formatErrorMessage(e);
       showCustomError(context, errorMessage);
     } finally {
       setState(() { isLoading = false; });
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

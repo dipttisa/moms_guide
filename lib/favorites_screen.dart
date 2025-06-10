@@ -16,36 +16,30 @@ class FavoritesScreen extends StatefulWidget {
 }
 
 class _FavoritesScreenState extends State<FavoritesScreen> with AutomaticKeepAliveClientMixin {
-  // State variables
-  String _userName = ''; // User name for header
-  String _userEmail = ''; // User email for header
-  // Removed: List<Map<String, dynamic>> _relevantItems = []; // Data for stories
-  List<Map<String, dynamic>> _categoryNames = []; // Data for categories
-  int _selectedCategoryIndex = 0; // Selected category index
-  List<Map<String, dynamic>> _categoryItems = []; // Data for vertical grid
-  bool _isLoadingItems = false; // Loading state for vertical grid items
-  List<Map<String, dynamic>> _filteredItems = []; // Filtered data for vertical grid
-  final int _currentIndex = 1; // Current navigation index - set to 1 for Favorites
-  List<String> _selectedSymptomIds = []; // Changed from List<int> to List<String>
+  String _userName = ''; 
+  String _userEmail = ''; 
+  List<Map<String, dynamic>> _categoryNames = []; 
+  int _selectedCategoryIndex = 0; 
+  List<Map<String, dynamic>> _categoryItems = []; 
+  bool _isLoadingItems = false; 
+  List<Map<String, dynamic>> _filteredItems = []; 
+  final int _currentIndex = 1; 
+  List<String> _selectedSymptomIds = []; 
   bool _isFiltered = false;
   final SupabaseClient supabase = Supabase.instance.client;
   Set<String> _favoritedArticleIds = {}; 
 
-  // Controllers for search (will be implemented later)
   final TextEditingController _searchController = TextEditingController();
-  final ScrollController _scrollController = ScrollController(); // For CustomScrollView
-
+  final ScrollController _scrollController = ScrollController();
   @override
   bool get wantKeepAlive => true;
 
   @override
   void initState() {
     super.initState();
-    _loadUserData(); // Load user data for header
-    // Removed: _loadRelevantItems(); // Load data for stories
-    _loadCategories(); // Load category names
-    _searchController.addListener(_performSearch); // Add listener to search controller
-    // _loadCategoryItems(_categoryNames[_selectedCategoryIndex]['id']); // Load items for initial category (will call after categories load)
+    _loadUserData(); 
+    _loadCategories(); 
+    _searchController.addListener(_performSearch);
   }
 
   @override
@@ -56,18 +50,15 @@ class _FavoritesScreenState extends State<FavoritesScreen> with AutomaticKeepAli
     }
   }
 
-  // Dispose controllers
   @override
   void dispose() {
-    _searchController.dispose(); // Dispose search controller
+    _searchController.dispose(); 
     _scrollController.dispose();
     super.dispose();
   }
 
-  // --- Data Loading Methods ---
   Future<void> _loadUserData() async {
     if (!mounted) return;
-    
     try {
       final user = supabase.auth.currentUser;
       if (user != null) {
@@ -89,7 +80,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> with AutomaticKeepAli
     }
   }
 
-  // Removed: Future<void> _loadRelevantItems() async { ... }
 
   Future<void> _loadCategories() async {
     if (!mounted) return;
@@ -167,7 +157,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> with AutomaticKeepAli
     }
   }
 
-  // Method to perform search filtering
   void _performSearch() {
     if (!mounted) return;
     
@@ -193,7 +182,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> with AutomaticKeepAli
     if (index == _currentIndex) return;
 
     switch (index) {
-      case 0: // Home
+      case 0:
          Navigator.pushReplacement(
           context,
           PageRouteBuilder(
@@ -208,10 +197,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> with AutomaticKeepAli
           ),
         );
         break;
-      case 1: // Favorites
-        // Already on favorites
+      case 1:
         break;
-      case 2: // CalendarScreen
+      case 2: 
          Navigator.pushReplacement(
           context,
           PageRouteBuilder(
@@ -226,7 +214,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> with AutomaticKeepAli
           ),
         );
         break;
-      case 3: // Profile
+      case 3: 
         Navigator.pushReplacement(
           context,
           PageRouteBuilder(
@@ -245,13 +233,11 @@ class _FavoritesScreenState extends State<FavoritesScreen> with AutomaticKeepAli
   }
 
   Future<void> _removeFavorite(String articleId) async {
-    final user = supabase.auth.currentUser; // Get current user
+    final user = supabase.auth.currentUser; 
     if (user == null) {
       print('User not logged in. Cannot remove favorite.');
-      // Optionally show a message to the user
-      return; // Exit if user is not logged in
+      return; 
     }
-
     try {
       await supabase
           .from('favourites')
@@ -269,7 +255,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> with AutomaticKeepAli
       print('Removed article $articleId from favorites.');
     } catch (e) {
       print('Error removing favorite for article $articleId: $e');
-      // Optionally show an error message to the user
     }
   }
 
@@ -306,10 +291,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> with AutomaticKeepAli
           ''')
           .eq('user_id', supabase.auth.currentUser!.id)
           .filter('information_article.symptom_id', 'in', symptomIds);
-
       if (!mounted) return;
-      
-      // Преобразуем данные в нужный формат
       final List<Map<String, dynamic>> articles = response
           .map((item) {
             final article = item['information_article'] as Map<String, dynamic>;
@@ -368,10 +350,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> with AutomaticKeepAli
             )
           ''')
           .eq('user_id', supabase.auth.currentUser!.id);
-
       if (!mounted) return;
-      
-      // Преобразуем данные в нужный формат
       final List<Map<String, dynamic>> articles = response
           .map((item) {
             final article = item['information_article'] as Map<String, dynamic>;
@@ -404,19 +383,17 @@ class _FavoritesScreenState extends State<FavoritesScreen> with AutomaticKeepAli
     }
   }
 
-  // --- UI Build Method ---
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // No AppBar in this mockup
       body: Container(
         decoration: BoxDecoration(
            gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color.fromARGB(157, 235, 230, 242), // Lighter purple from registration
-              Color.fromARGB(255, 252, 225, 219).withOpacity(0.7), // Peach from registration, now slightly transparent
+              Color.fromARGB(157, 235, 230, 242), 
+              Color.fromARGB(255, 252, 225, 219).withOpacity(0.7), 
             ],
             stops: [0.0, 1.0],
           ),
@@ -425,7 +402,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> with AutomaticKeepAli
           child: CustomScrollView(
             controller: _scrollController,
             slivers: [
-              // Combined Top Section: User Info, Search, Filter, Divider, Categories
               SliverPersistentHeader(
                 pinned: true,
                 delegate: _CombinedHeaderDelegate(
@@ -449,7 +425,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> with AutomaticKeepAli
                       builder: (context) => FilterModal(
                         onFiltersApplied: (symptomIds) {
                           setState(() {
-                            _selectedSymptomIds = symptomIds; // No need to convert to int
+                            _selectedSymptomIds = symptomIds; 
                           });
                           _loadFilteredItems(_selectedSymptomIds);
                         },
@@ -458,15 +434,10 @@ class _FavoritesScreenState extends State<FavoritesScreen> with AutomaticKeepAli
                   },
                 ),
               ),
-
-              // Space between Header and Grid
-              // Removed SizedBox as spacing is now handled within the combined header or by SliverPadding
-
-              // Vertical Grid (Category Items)
               SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0), // Padding for the grid
+                padding: const EdgeInsets.symmetric(horizontal: 16.0), 
                 sliver: _isLoadingItems
-                    ? SliverFillRemaining( // Use SliverFillRemaining for centered loader/message
+                    ? SliverFillRemaining( 
                         hasScrollBody: false,
                         child: Center(child: CircularProgressIndicator()),
                       )
@@ -474,12 +445,12 @@ class _FavoritesScreenState extends State<FavoritesScreen> with AutomaticKeepAli
                         ? SliverFillRemaining(
                             hasScrollBody: false,
                             child: Align(
-                               alignment: Alignment.topCenter, // Align to top center
+                               alignment: Alignment.topCenter, 
                                child: Padding(
-                                 padding: const EdgeInsets.only(top: 24.0), // Add some space from the top
+                                 padding: const EdgeInsets.only(top: 24.0), 
                                  child: Text(
                                      'Нет избранных элементов для этой категории',
-                                     textAlign: TextAlign.center, // Ensure text is centered horizontally within its bounds
+                                     textAlign: TextAlign.center, 
                                      style: TextStyle(
                                        fontFamily: 'Comfortaa',
                                        fontSize: 16,
@@ -492,18 +463,16 @@ class _FavoritesScreenState extends State<FavoritesScreen> with AutomaticKeepAli
                           )
                         : SliverGrid.builder(
                             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2, // 2 items per row
-                              crossAxisSpacing: 16.0, // Horizontal spacing
-                              mainAxisSpacing: 16.0, // Vertical spacing
-                              childAspectRatio: 0.7, // Aspect ratio of grid items
+                              crossAxisCount: 2, 
+                              crossAxisSpacing: 16.0, 
+                              mainAxisSpacing: 16.0, 
+                              childAspectRatio: 0.7, 
                             ),
                             itemCount: _filteredItems.length,
                             itemBuilder: (context, index) {
-                               final categoryItem = _filteredItems[index]; // Use item from filtered list
+                               final categoryItem = _filteredItems[index]; 
                                final imageUrl = categoryItem != null ? categoryItem['image'] : null;
-
                                return GestureDetector(
-                                 
                                   onTap: () {
                                     Navigator.push(
                                       context,
@@ -512,7 +481,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> with AutomaticKeepAli
                                           article: categoryItem,
                                           onFavoriteChanged: (articleId, isFavorite) {
                                             if (!isFavorite) {
-                                              // Удаляем из избранного списка
                                               setState(() {
                                                 _categoryItems.removeWhere((item) => item['id'] == articleId);
                                                 _filteredItems.removeWhere((item) => item['id'] == articleId);
@@ -526,33 +494,30 @@ class _FavoritesScreenState extends State<FavoritesScreen> with AutomaticKeepAli
                                   },
                                  child: Container(
                                    decoration: BoxDecoration(
-                                     color: Colors.white, // Changed background to white
+                                     color: Colors.white, 
                                      borderRadius: BorderRadius.circular(12.0),
                                      boxShadow: [
                                        BoxShadow(
                                          color: Colors.grey.withOpacity(0.2),
                                          spreadRadius: 2,
                                          blurRadius: 4,
-                                         offset: const Offset(0, 2), // changes position of shadow
+                                         offset: const Offset(0, 2), 
                                        ),
                                      ],
                                    ),
-                                    child: Stack( // Use Stack for content and "Add to favorites" icon/text
+                                    child: Stack( 
                                       children: [
                                         Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              // Conditional content: Image or Header + Text
                                               if (imageUrl != null && (imageUrl as String).isNotEmpty)
-                                                // Content with Image (Image + Header)
-                                                Column( // Wrap image and header in a Column
+                                                Column( 
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
-                                                    // Item Image Area
-                                                    SizedBox( // Use SizedBox for fixed height
-                                                      height: 150.0, // Fixed height for the image area
+                                                    SizedBox( 
+                                                      height: 150.0, 
                                                       child: ClipRRect(
                                                         borderRadius: BorderRadius.circular(8.0),
                                                         child: Image.network(
@@ -565,8 +530,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> with AutomaticKeepAli
                                                         ),
                                                       ),
                                                     ),
-                                                    const SizedBox(height: 2), // Space between image and header
-                                                    // Article Header below the image
+                                                    const SizedBox(height: 2), 
                                                     Text(
                                                        categoryItem != null ? categoryItem['header'] ?? 'Заголовок статьи' : 'Заголовок статьи',
                                                        style: TextStyle(
@@ -581,7 +545,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> with AutomaticKeepAli
                                                   ],
                                                 )
                                               else
-                                                // Header and Text (if no image)
                                                 Column(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
@@ -596,7 +559,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> with AutomaticKeepAli
                                                         maxLines: 2,
                                                         overflow: TextOverflow.ellipsis,
                                                      ),
-                                                     const SizedBox(height: 4), // Space between header and text
+                                                     const SizedBox(height: 4),
                                                      Text(
                                                         categoryItem != null ? categoryItem['text_of_article'] ?? 'Текст статьи...\nПродолжение статьи...' : 'Текст статьи...\nПродолжение статьи...',
                                                          style: TextStyle(
@@ -610,16 +573,14 @@ class _FavoritesScreenState extends State<FavoritesScreen> with AutomaticKeepAli
                                                      ),
                                                   ],
                                                 ),
-                                              // Placeholder lines (removed)
                                             ],
                                           ),
                                         ),
-                                         // Heart icon in the top right corner (FILLED)
                                          Positioned(
                                             top: 8,
                                             right: 8,
                                             child: GestureDetector(
-                                              onTap: () => _removeFavorite(categoryItem['id'] as String), // Call remove favorite method
+                                              onTap: () => _removeFavorite(categoryItem['id'] as String), 
                                               child: Container(
                                                 padding: EdgeInsets.all(4),
                                                 decoration: BoxDecoration(
@@ -627,9 +588,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> with AutomaticKeepAli
                                                    borderRadius: BorderRadius.circular(8),
                                                 ),
                                                  child: Icon(
-                                                    Icons.favorite, // Filled heart icon
+                                                    Icons.favorite,
                                                     size: 18,
-                                                    color: Color(0xFFBE7DBC), // Match category header color
+                                                    color: Color(0xFFBE7DBC), 
                                                  ),
                                               ),
                                             ),
@@ -654,7 +615,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> with AutomaticKeepAli
   }
 }
 
-// Delegates for SliverPersistentHeader (copied from home_screen.dart)
 
 class _CombinedHeaderDelegate extends SliverPersistentHeaderDelegate {
   const _CombinedHeaderDelegate({
@@ -678,45 +638,40 @@ class _CombinedHeaderDelegate extends SliverPersistentHeaderDelegate {
   final VoidCallback onFilterPressed;
 
   @override
-  double get minExtent => 218.0; // Approximate collapsed height (User Info + Search + Divider + Category List)
+  double get minExtent => 218.0; 
 
   @override
-  double get maxExtent => 218.0; // Approximate expanded height (same as min for now)
+  double get maxExtent => 218.0; 
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    // Apply blur and opacity based on scroll offset for the top header
-    // final double opacity = (1.0 - shrinkOffset / maxExtent).clamp(0.0, 1.0); // Opacity effect - disabled for now for simplicity
-
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color.fromARGB(157, 235, 230, 242), // Lighter purple from registration
-              Color.fromARGB(255, 252, 225, 219).withOpacity(0.7), // Peach from registration, now slightly transparent
+              Color.fromARGB(157, 235, 230, 242), 
+              Color.fromARGB(255, 252, 225, 219).withOpacity(0.7), 
             ],
             stops: [0.0, 1.0],
           ),
-        color: Color.fromARGB(117, 235, 230, 242).withOpacity(0.9), // Semi-transparent background when sticky
+        color: Color.fromARGB(117, 235, 230, 242).withOpacity(0.9), 
       ),
       child: ClipRect(
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10), // Apply blur effect
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10), 
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16.0, 7.0, 16.0, 16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // User Name and Email
-                 SizedBox(height: 8.0), // Added space below AppBar area
+                 SizedBox(height: 8.0), 
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 0), // Adjusted padding
+                  padding: const EdgeInsets.symmetric(horizontal: 0), 
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // User Name
                       Text(
                         userName.isNotEmpty ? userName : 'Загрузка...',
                         style: const TextStyle(
@@ -728,7 +683,6 @@ class _CombinedHeaderDelegate extends SliverPersistentHeaderDelegate {
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 4),
-                      // User Email
                       Text(
                         userEmail.isNotEmpty ? userEmail : 'Загрузка...',
                         style: const TextStyle(
@@ -742,9 +696,7 @@ class _CombinedHeaderDelegate extends SliverPersistentHeaderDelegate {
                     ],
                   ),
                 ),
-                const SizedBox(height: 16), // Space below user info
-
-                // Search Bar and Filter Button
+                const SizedBox(height: 16), 
                 Row(
                   children: [
                     Expanded(
@@ -763,7 +715,7 @@ class _CombinedHeaderDelegate extends SliverPersistentHeaderDelegate {
                             contentPadding: EdgeInsets.symmetric(vertical: 14, horizontal: 4),
                           ),
                           style: TextStyle(fontFamily: 'Comfortaa', fontSize: 15, color: Color.fromARGB(255, 54, 6, 56)),
-                          onChanged: onSearchChanged, // Use the callback
+                          onChanged: onSearchChanged, 
                         ),
                       ),
                     ),
@@ -782,18 +734,14 @@ class _CombinedHeaderDelegate extends SliverPersistentHeaderDelegate {
                     ),
                   ],
                 ),
-                 const SizedBox(height: 16.0), // Space below search/filter
-
-                // Divider Line
+                 const SizedBox(height: 16.0), 
                  Container(
                   height: 1.0,
-                  color: const Color.fromARGB(157, 119, 59, 125).withOpacity(0.3), // Darker line
+                  color: const Color.fromARGB(157, 119, 59, 125).withOpacity(0.3), 
                  ),
-                 const SizedBox(height: 16.0), // Space below divider
-
-                // Categories Horizontal List
+                 const SizedBox(height: 16.0), 
                  SizedBox(
-                   height: 40.0, // Height for category list
+                   height: 40.0, 
                    child: ListView.builder(
                      scrollDirection: Axis.horizontal,
                      itemCount: categoryNames.length,
@@ -801,7 +749,7 @@ class _CombinedHeaderDelegate extends SliverPersistentHeaderDelegate {
                        final category = categoryNames[index];
                        final isSelected = index == selectedCategoryIndex;
                        return GestureDetector(
-                         onTap: () => onCategorySelected(index), // Use the callback
+                         onTap: () => onCategorySelected(index), 
                          child: Container(
                            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
                            margin: EdgeInsets.only(left: index == 0 ? 16.0 : 8.0, right: index == categoryNames.length - 1 ? 16.0 : 8.0),
@@ -809,7 +757,7 @@ class _CombinedHeaderDelegate extends SliverPersistentHeaderDelegate {
                              color: isSelected ? Color(0xFFBE7DBC) : Color.fromARGB(157, 235, 230, 242).withOpacity(0.80),
                              borderRadius: BorderRadius.circular(12.0),
                            ),
-                           child: Center( // Added Center to match home_screen.dart structure
+                           child: Center( 
                              child: Text(
                                category['name'] ?? 'Категория',
                                style: TextStyle(
