@@ -1201,10 +1201,7 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
             })
             .eq('id', journalId);
 
-        await supabase
-            .from('journal_symptom')
-            .delete()
-            .eq('journal_id', journalId);
+        
       } else {
         final journalResponse = await supabase
             .from('journal')
@@ -1471,49 +1468,65 @@ Future<void> _onDaySelected(DateTime selectedDay, DateTime focusedDay) async {
                 ),
               ),
               actions: [
-                TextButton(
-                  onPressed: () {
-                    _stopMovementTracking();
-                  },
-                  child: Text(
-                    'Остановить отслеживание',
-                    style: TextStyle(
-                      fontFamily: 'Comfortaa',
-                      fontSize: 14,
-                      color: Color(0xFFBE7DBC),
-                    ),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          _stopMovementTracking();
+                        },
+                        child: Text(
+                          'Остановить отслеживание',
+                          style: TextStyle(
+                            fontFamily: 'Comfortaa',
+                            fontSize: 14,
+                            color: Color(0xFFBE7DBC),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: isTrackingAvailable
+                              ? () async {
+                                  await SystemSound.play(SystemSoundType.click);
+                                  setState(() {
+                                    _movementCount++;
+                                    if (_movementCount >= 10) {
+                                      showCustomSnackbar(
+                                        context,
+                                        'Достигнута норма шевелений!',
+                                        success: true,
+                                      );
+                                    }
+                                  });
+                                  await _saveFetalMovements();
+                                }
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                isTrackingAvailable ? Color(0xFFBE7DBC) : Colors.grey,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            'Отметить шевеление',
+                            style: TextStyle(
+                              fontFamily: 'Comfortaa',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                ElevatedButton(
-                  onPressed: isTrackingAvailable ? () async {
-                    await SystemSound.play(SystemSoundType.click);
-                    setState(() {
-                      _movementCount++;
-                      if (_movementCount >= 10) {
-                        showCustomSnackbar(context, 'Достигнута норма шевелений!', success: true);
-                      }
-                    });
-                    await _saveFetalMovements();
-                  } : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: isTrackingAvailable ? Color(0xFFBE7DBC) : Colors.grey,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    minimumSize: Size(double.infinity, 40),
-                  ),
-                  child: Text(
-                    'Отметить шевеление',
-                    style: TextStyle(
-                      fontFamily: 'Comfortaa',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              ],
+                ],
               actionsAlignment: MainAxisAlignment.center,
             );
           },
